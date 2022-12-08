@@ -14,7 +14,7 @@ cd robocup-rescue-23
 ```
 ## Create Your Branch
 
-Right now you only have the master branch, use this following command to pull the development branch:
+In order to develop new functionality or a new feature in an organized manner, you will need to work on a separate branch (for brevity, think of a branch as a separate workspace.) Right now you only have the main branch, so use this following command to pull the development branch:
 ``` bash
 git checkout -b development origin/development
 ```
