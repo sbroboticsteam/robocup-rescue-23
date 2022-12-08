@@ -25,6 +25,16 @@ git checkout -b NAME_OF_BRANCH
 ```
 Replace `NAME_OF_BRANCH` with a more appropriate name. A name the concisely summarizes the feature/functionality being added will suffice.
 
+## Fetching and Merging Updates
+In order to ensure our code is up-to-date with the development branch, we will need to run the following commands. First, we will fetch code from the public RCR repository to see whether updates have been made.
+
+``` bash
+git fetch origin
+```
+If updates have been made to one or more branches, a list of those branches will be displayed in the terminal. If you see a branch of interest you want to obtain updates from (usually `origin/development` or `origin/main`), you then merge said branch into yours by running:
+``` bash
+git merge origin/BRANCH_OF_INTEREST
+```
 ## Set Upstream Branch
 
 "Set upstream branch" means telling your current branch which other branch to reference when updating itself with other people's code.
@@ -42,9 +52,6 @@ git branch -vv
 Your terminal should look like this:
 
 <img src="misc\img\gitBranchingCheck.JPG" alt="Kitten" title="Git Branching Check" style="border-radius : 7px" />
-
-## Fetching and Merging Updates
-In order to ensure our code is up-to-date with the development branch, we will need to do the following
 
 This is the layout of the Git branches and an example of the workflow we will try to follow:
 <img src="./misc/img/gitBranchWokflow.png" alt="Kitten" title="Git Branching Check" style="border-radius : 7px" />
