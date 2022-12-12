@@ -1,7 +1,7 @@
 # **RoboCup Rescue 2023** - Stony Brook Robotics Team
 
 ## RoboCup Rescue Description
-The Stony Brook Robotics Team (SBRT) plans to compete in the [RoboCup Rescue](https://rrl.robocup.org/) competition as part of [RoboCup 2023](https://2023.robocup.org/en/home/)!
+The Stony Brook Robotics Team (SBRT) plans to compete in the [RoboCup Rescue](https://rrl.robocup.org/) competition as part of [RoboCup 2023](https://2023.robocup.org/en/home/)! This is the repository where the code running on the [NVIDIA Jetson Xavier NX](https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-xavier-nx/) that is on our robot.
 
 
 ## File Structure of Repository
