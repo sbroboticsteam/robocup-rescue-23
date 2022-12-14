@@ -11,14 +11,14 @@ ssh-keygen
 2) You'll receive a few prompts after that, as shown in the image below. Simply press "Enter" for the first prompt, and provide a memorable password that you can remember for the second, third prompts.
 <img src="./misc/img/ssh_prompts.png" alt="Kitten" title="ssh-keygen-prompts" style="border-radius : 7px" />
 
-3) After creating an SSH key on your Ubuntu virtual machine (or your Linux interface of choice), [add the SSH key to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account?platform=linux#adding-a-new-ssh-key-to-your-account).
+3) After creating an SSH key on your Ubuntu virtual machine (or your Linux interface of choice), [add the SSH key to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account?platform=linux#adding-a-new-ssh-key-to-your-account) by following **Step 2 and onwards**. In lieu of Step 1, copy the output of running `cat ~/.ssh/id_rsa.pub` from your root directory. If you get a terminal message stating "No such file or directory", you'll need to snoop around in your virtual machine's `.ssh` directory (it's a hidden folder) for the appropriate `.pub` filename to feed into the `cat` command.
 
 4) Now, return to your Ubuntu virtual machine and run the following command in your root directory:
 ``` bash
 git clone git@github.com:sbroboticsteam/robocup-rescue-23.git
 ```
 
-5) If all went successfully, you can now enter your `robocup-rescue-23` repository with the following command:
+5) When attempting to clone the repository, you'll be prompted to enter the SSH password you created when you ran the `ssh-keygen` command. If all went successfully, you can now enter your `robocup-rescue-23` repository with the following command:
 ``` bash
 cd robocup-rescue-23
 ```
