@@ -1,5 +1,5 @@
-## **Download Git**
-Before following any of the other steps, make sure to [download Git from here](https://git-scm.com/downloads) on your Ubuntu virtual machine.
+## **Verify Git is Recognized**
+Your Ubuntu virtual machine comes with Git already installed. You can verify whether the virtual machine will recognize Git commands by running `git --version` in your terminal. If an error is outputted, then run `sudo apt update` and `sudo apt install git` to resolve this.
 
 ## **Cloning the RCR Repository**
 We will be cloning this repository using SSH instead of the traditional HTTPS. SSH requires us to perform a few preliminary steps, but makes pushing commits less cumbersome and is more secure in the long-run (here's an interesting [GeeksforGeeks article](https://www.geeksforgeeks.org/how-to-generate-ssh-key-with-ssh-keygen-in-linux/) that discusses the concepts at play.)
