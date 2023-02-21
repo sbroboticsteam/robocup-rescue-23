@@ -4,6 +4,9 @@
 bool promptSent = false;
 
 
+
+
+
 const String ErrorCodes[9] = {};
 
 struct command {
@@ -24,7 +27,7 @@ struct command {
 */
 
 String pwmFunc(uint8_t channel, uint8_t hz) {
-  return "good value";
+  return "good value :)";
 }
 
 String pwmDuty(uint8_t channel, uint8_t dutyCyle) {
