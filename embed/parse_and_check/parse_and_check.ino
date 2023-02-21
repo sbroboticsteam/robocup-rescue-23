@@ -32,7 +32,7 @@ String pwmDuty(uint8_t channel, uint8_t dutyCyle) {
 }
 
 String pwmGetVal(uint8_t channel) {
-  return "good value";
+  return "good value - need one here too :0";
 }
 
 void setup() {
