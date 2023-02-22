@@ -182,7 +182,7 @@ bool validate(command &cmd)
       cmd.validity = 6;
       return false;
     }
-    // Param 2 is between 000(.)00 and 100(.)00
+    // Param 2 is between 0 and 10000
     if (cmd.params[1] < 0 || cmd.params[1] > 10000)
     {
       cmd.validity = 6;
@@ -245,7 +245,7 @@ String sendCommand(command cmd)
     // Convert param 1 to uint8_t
     uint8_t p1 = (uint8_t)cmd.params[0];
     // Convert param 2 to uint16_t
-    uint16_t p2 = (uint16_t)cmd.params[1]; // @Noam, even if 0000 is entered originally, wont this just make it a 0 anyway?
+    uint16_t p2 = (uint16_t)cmd.params[1];
     // Send command
     return pwmDuty(p1, p2);
   }
