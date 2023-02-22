@@ -1,71 +1,95 @@
-#define MAXPARAMS 4       // TODO - What value should this actually be?
-#define PLACEHOLDER -420  // TODO - need to find a good placeholder value that will never actually be used
+/*
+This is the code that will receive a command from the jetson using UART (Serial1 in this case), take in that string and
+then parse it into a command. This command will then be put into a struct (aptly named command), which holds the type of
+command (a string, example "pwmFunc") the array of parameters (ints), an int to represent the number of parameters, and
+an int to represent the validity of the command (used to issue feedback/debugging for the software team)
+
+To add new commands:
+
+Step 1:
+  Create the command as a function within the `commands` section (currently line 45 but will inevitably change)
+Step 2:
+  Within the `parse` function create a new else if case for your new command, and add in whatever limits it needs
+  (needs X amount of params, and param[X] needs to be within a certain range)
+Step 3:
+  Within the `sendCommand` function create a new else if case for your new command, and convert/cast/whatever needs to
+  be done so that the parameter types match what the function takes in
+*/
+
+#define MAXPARAMS 4
+#define PLACEHOLDER -420 // Change to a val that is never used (as new functions are added)
+#define DEBUGSERIAL Serial
+#define COMMSERIAL Serial // Change this back to `Serial1` when using Arduino Mega
 
 bool promptSent = false;
 
-
-
-
-
-const String ErrorCodes[9] = {};
-
-struct command {
-  String type;
-  int params[MAXPARAMS] = { -420, -420, -420, -420 }; // If MAXPARAMS is changed this needs to be as well
-  uint8_t paramCount;
-  uint8_t validity;
+const String ErrorCodes[9] = {
+    "No parameters",                       // 0
+    "Valid",                               // 1
+    "Invalid command",                     // 2
+    "Invalid paramters",                   // 3
+    "Something went wrong during parsing", // 4
+    "Wrong number of parameters",          // 5
+    "Paramter outside of possible range",  // 6
+    "Unknown command",                     // 7
+    "Command was not validated first"      // 8
 };
 
-// Concerns: 
-/* uint8_t is too small for hz and dutyCycle
-** how to do conversion from XXXxx to XXX.xx and have that still be int, needs float/double? 
-** what is the max params going to be AKA is 4 ok? should it be less/more
-** placeholder? (for the params array)
-** worth saving all the invalid states or should it just be true/false or should there be no states at all? - you should use ErrorCodes const array
-** for validate and send i used ignore case, is that ok or should it be changed
-** line 58 is preclear params still needed with line 8?
-*/
+struct command
+{
+  String type;
+  int params[MAXPARAMS] = {-420, -420, -420, -420}; // If MAXPARAMS is changed this needs to be as well
+  uint8_t paramCount;
+  uint8_t validity;
+  bool validated = false;
+};
 
-String pwmFunc(uint8_t channel, uint8_t hz) {
+/// Commands ///
+
+String pwmFunc(uint8_t channel, uint16_t hz)
+{
   return "good value :)";
 }
 
-String pwmDuty(uint8_t channel, uint8_t dutyCyle) {
+String pwmDuty(uint8_t channel, uint16_t dutyCyle)
+{
   return "good value";
 }
 
-String pwmGetVal(uint8_t channel) {
+String pwmGetVal(uint8_t channel)
+{
   return "good value - need one here too :0";
 }
 
-void setup() {
-  Serial.begin(9600);
-  Serial1.begin(9600); 
-   
+/// End commands ///
+
+/**
+ * @brief Loop that only runs once, used to set up Serial
+ */
+void setup()
+{
+  DEBUGSERIAL.begin(9600);
+  COMMSERIAL.begin(9600);
 }
 
-command parse(String inputString) {
-  /*
-  -1 = No params
-  0 = Valid
-  1 = Invalid Command
-  2 = Invalid Params
-  3 = Something else went wrong
-  */
-
+/**
+ * @brief Parses a string into a command struct
+ *
+ * @param inputString New line terminating string read in from the jetson
+ * @return command Struct that contains the command and parameters that were parsed, along with basic validity checks
+ */
+command parse(String inputString)
+{
   command toReturn;
-  // Preclear params (is this still needed?)
-  for (int i = 0; i < MAXPARAMS; i++) {
-    toReturn.params[i] = -420;
-  }
   toReturn.paramCount = 0;
-  toReturn.validity = 3;
+  toReturn.validity = 4;
 
   // Get the command part of the string
   inputString.trim();
-  if (inputString.indexOf(' ') == -1) {
+  if (inputString.indexOf(' ') == -1)
+  {
     toReturn.type = inputString;
-    toReturn.validity = -1;
+    toReturn.validity = 0;
     return toReturn;
   }
   int spaceIndex = inputString.indexOf(' ');
@@ -76,9 +100,11 @@ command parse(String inputString) {
 
   // Get the params part of the string
   int paramIndex = 0;
-  while (spaceIndex != -1) {
-    if (inputString.substring(0, spaceIndex).toInt() == 0) {
-      toReturn.validity = 2;
+  while (spaceIndex != -1)
+  {
+    if (inputString.substring(0, spaceIndex).toInt() == 0)
+    {
+      toReturn.validity = 3;
       return toReturn;
     }
     toReturn.params[paramIndex] = inputString.substring(0, spaceIndex).toInt();
@@ -89,104 +115,142 @@ command parse(String inputString) {
   }
 
   // Get the last parameter since it doesnt have a trailing space
-  if (inputString.substring(spaceIndex + 1).toInt() == 0) {
-    toReturn.validity = 2;
+  if (inputString.substring(spaceIndex + 1).toInt() == 0)
+  {
+    toReturn.validity = 3;
     return toReturn;
   }
   toReturn.params[paramIndex] = inputString.substring(spaceIndex + 1).toInt();
 
-  // Count number of params // Probably not needed, maybe delete later on
-  for (int i = 0; i < MAXPARAMS; i++) {
-    if (toReturn.params[i] == PLACEHOLDER) {
+  // Count number of params
+  for (int i = 0; i < MAXPARAMS; i++)
+  {
+    if (toReturn.params[i] == PLACEHOLDER)
+    {
       toReturn.paramCount = i;
       break;
     }
   }
-  toReturn.validity = 0;
+  toReturn.validity = 1;
   return toReturn;
 }
 
-bool validate(command &cmd) {
-  /*
-  4 = wrong number of params
-  5 = params out of range
-  6 = unknown command
-  */
-
-  // Used ignore case but that might not be wanted behavior
-  if (cmd.type.equals("pwmFunc")) {
+/**
+ * @brief Checks the cmd.validity state and simplifies it into true/false
+ *
+ * @param cmd Command to validate
+ * @return true Command is valid (`ErrorCodes[cmd.validity]` is either 0 or 1)
+ * @return false Command is invalid, use `ErrorCodes[cmd.validity]` to see the error
+ */
+bool validate(command &cmd)
+{
+  if (cmd.type.equals("pwmFunc"))
+  {
     // Needs 2 params
-    if (cmd.paramCount != 2) {
-      cmd.validity = 4;
+    if (cmd.paramCount != 2)
+    {
+      cmd.validity = 5;
       return false;
     }
     // Param 1 is between 0 and 15
-    if (cmd.params[0] < 0 || cmd.params[0] > 15) {
-      cmd.validity = 5;
+    if (cmd.params[0] < 0 || cmd.params[0] > 15)
+    {
+      cmd.validity = 6;
       return false;
     }
     // Param 2 is between 0 and 1600
-    if (cmd.params[1] < 0 || cmd.params[1] > 1600) {
-      cmd.validity = 5;
+    if (cmd.params[1] < 0 || cmd.params[1] > 1600)
+    {
+      cmd.validity = 6;
       return false;
     }
     // No issues found, must be valid
+    cmd.validated = true;
     return true;
-  } else if (cmd.type.equals("pwmDuty")) {
+  }
+  else if (cmd.type.equals("pwmDuty"))
+  {
     // Needs 2 params
-    if (cmd.paramCount != 2) {
-      cmd.validity = 4;
+    if (cmd.paramCount != 2)
+    {
+      cmd.validity = 5;
       return false;
     }
     // Param 1 is between 0 and 15
-    if (cmd.params[0] < 0 || cmd.params[0] > 15) {
-      cmd.validity = 5;
+    if (cmd.params[0] < 0 || cmd.params[0] > 15)
+    {
+      cmd.validity = 6;
       return false;
     }
     // Param 2 is between 000(.)00 and 100(.)00
-    if (cmd.params[1] < 0 || cmd.params[1] > 10000) {
-      cmd.validity = 5;
+    if (cmd.params[1] < 0 || cmd.params[1] > 10000)
+    {
+      cmd.validity = 6;
       return false;
     }
     // No issues found, must be valid
+    cmd.validated = true;
     return true;
-  } else if (cmd.type.equals("pwmGetVal")) {
+  }
+  else if (cmd.type.equals("pwmGetVal"))
+  {
     // Needs 1 param
-    if (cmd.paramCount != 1) {
-      cmd.validity = 4;
+    if (cmd.paramCount != 1)
+    {
+      cmd.validity = 5;
       return false;
     }
     // Param 1 is between 0 and 15
-    if (cmd.params[0] < 0 || cmd.params[0] > 15) {
-      cmd.validity = 5;
+    if (cmd.params[0] < 0 || cmd.params[0] > 15)
+    {
+      cmd.validity = 6;
       return false;
     }
     // No issues found, must be valid
+    cmd.validated = true;
     return true;
-  } else {
-    Serial1.println("Invalid command type");
-    cmd.validity = 6;
+  }
+  else
+  {
+    cmd.validity = 7;
     return false;
   }
 }
 
-String sendCommand(command cmd) {
-  // Used ignore case but that might not be wanted behavior
-  if (cmd.type.equals("pwmFunc")) {
+/**
+ * @brief Sends command to its respective function (`cmd.type`)
+ *
+ * @param cmd Command to send. Needs to be prevalidated using validate() function
+ * @return String Whatever `cmd.type` function returns
+ */
+String sendCommand(command cmd)
+{
+  if (cmd.validated == false)
+  {
+    cmd.validity = 8;
+    return ErrorCodes[cmd.validity];
+  }
+
+  if (cmd.type.equals("pwmFunc"))
+  {
     // Convert param 1 to uint8_t
     uint8_t p1 = (uint8_t)cmd.params[0];
     // Convert param 2 to uint16_t
     uint16_t p2 = (uint16_t)cmd.params[1];
     // Send command
     return pwmFunc(p1, p2);
-  } else if (cmd.type.equals("pwmDuty")) {
+  }
+  else if (cmd.type.equals("pwmDuty"))
+  {
     // Convert param 1 to uint8_t
     uint8_t p1 = (uint8_t)cmd.params[0];
     // Convert param 2 to uint16_t
-    uint16_t p2 = (uint16_t)cmd.params[1];
+    uint16_t p2 = (uint16_t)cmd.params[1]; // @Noam, even if 0000 is entered originally, wont this just make it a 0 anyway?
     // Send command
     return pwmDuty(p1, p2);
-  } else if (cmd.type.equals("pwmGetVal")) {
+  }
+  else if (cmd.type.equals("pwmGetVal"))
+  {
     // Convert param 1 to uint8_t
     uint8_t p1 = (uint8_t)cmd.params[0];
     // Send command
@@ -195,56 +259,52 @@ String sendCommand(command cmd) {
   return "Command not found";
 }
 
-void loop() {
+bool valid(command cmd)
+{
+  if (cmd.validity == 0 || cmd.validity == 1)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+/**
+ * @brief Main loop that repeats, put code here to run continuously
+ */
+void loop()
+{
   // Ask for command
-  //Serial1.println("Testing");
-  if (!promptSent) {
-    Serial1.println("Enter a command:");
+  if (!promptSent)
+  {
+    COMMSERIAL.println("Enter a command:");
     promptSent = true;
   }
 
-  if (Serial1.available() > 0) {
-
-    // Read in line
-    String inputString = Serial1.readStringUntil('\n');
+  if (COMMSERIAL.available() > 0)
+  {
+    // Read in line (Currently using just newline, no carriage return)
+    String inputString = COMMSERIAL.readStringUntil('\n');
 
     command currentCommand = parse(inputString);
-
-    //------------------------------
-    Serial1.print("Type: ");
-    Serial1.println(currentCommand.type);
-    if (currentCommand.paramCount > 0) {
-      Serial1.print("Params: ");
-      for (int i = 0; i < currentCommand.paramCount; i++) {
-        Serial1.print(currentCommand.params[i]);
-        Serial1.print(" ");
-      }
-      Serial1.println();
-    } else {
-      Serial1.println("No params");
-    }
-    //------------------------------
-
-    if ((currentCommand.validity != 0) && (currentCommand.validity != -1)) {
-      Serial1.println("Some issue with command parsing");
-      //------------------------------
-      Serial1.print("Error: ");
-      Serial1.println(currentCommand.validity);
-      //------------------------------
+    if (!valid(currentCommand))
+    {
+      COMMSERIAL.println(ErrorCodes[currentCommand.validity]);
       promptSent = false;
       return;
     }
 
-    if (validate(currentCommand)) {
-      Serial1.println("Validated Successfully");
-    } else {
-      Serial1.println("Error during validation");
-      //------------------------------
-      Serial1.print("Error: ");
-      Serial1.println(currentCommand.validity);
-      //------------------------------
+    if (!validate(currentCommand))
+    {
+      COMMSERIAL.println(ErrorCodes[currentCommand.validity]);
+      promptSent = false;
+      return;
     }
 
+    COMMSERIAL.println(sendCommand(currentCommand));
     promptSent = false;
+    return;
   }
 }
