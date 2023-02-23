@@ -64,8 +64,81 @@
     was found.
     \# *10 0014 00F3 (CR)*
 - ## AHC (Anti-Hunt Constants)
+    ### ***Description***
+    >Anti-Hunt Constants sets the thresholds used to determine if the position is sufficiently
+    close to the target to allow the motor to go into and to stay in Anti-Hunt mode. The first
+    parameter is the maximum error (in counts) allowed in the Anti-Hunt mode before the
+    unit will revert to normal closed loop operation. The second parameter is the maximum
+    error allowed to enter the Anti-Hunt mode.\
+    \
+    Setting the second parameter to a negative number (QuickControl: Check “Check
+    Holding Currents”) will cause a slightly different operation when going from no Anti-Hunt
+    into Anti-Hunt (Closed => Open). Normally the device will not go into Anti-Hunt until the
+    error is within the limit and the current torque (current) is less than the Open Loop
+    Holding torque (current). When the error parameter is negative, the torque is not
+    checked. This allows for zero holding current or “dead band” operation.\
+    \
+    If the Torque Limits (TQL) Open Loop Holding and Open Loop Moving parameters have
+    been set to zero, then the parameters in this command sets the limits of a conventional
+    dead-band.
+
+    | Encoder Counts/Rev (CPR) | Defaults Open to Close/<br>Close to Open | Max Recommended |
+    | --- | --- | --- |
+    | 4000 | 10/4 | 30 |
+    | 8000 | 20/8 | 60 |
+    | 16000 | 40/16 | 120 |
+    ### ***Command Info***
+    | Command | Command Type/Num | Parameters | Param Type | Parameter Range |
+    | --- | --- | --- | --- | --- |
+    | AHC | Program<br>Class D<br>150 (0x96)<br>3 words<br>Thread 1&2 | Open to Closed<br>Closed to Open | S16<br>S16 | 0 to 140<br>-140 to 140 |
+
+    ### ***Example***
+    Go into Anti-Hunt when within “4” counts of target. Go out of Anti-Hunt when “10” counts away\
+    *@16 150 10 4 (CR)*
+    ### ***Response***
+    ACK only
 - ## AHD (Anti-Hunt Delay)
+    ### ***Description***
+    >After the conditions are met for Anti-Hunt as specified by the Anti-Hunt Constants (AHC)
+    command, this Anti-Hunt Delay (AHD) specifies the amount of delay before going into
+    Anti-Hunt. This is useful for allowing a system time to “settle” prior to going into AntiHunt, thus preventing system “chatter”. See Anti-Hunt Constants (AHC) for more
+    details.\
+    \
+    Settling time is a system parameter, which must be analyzed under real working
+    conditions. Using the Control Panel in QuickControl allows viewing of motion profiles for
+    analyzing settling times.
+    ### ***Command Info***
+    | Command | Command Type/Num | Parameters | Param Type | Parameter Range |
+    | --- | --- | --- | --- | --- |
+    | AHD | Program<br>Class D<br>230 (0xE6)<br>2 words<br>Thread 1&2 | Delay Count in Ticks<br>1 Tick = 120us | U16 | 0 to 65535<br>Default = 1250 ticks (150ms) |
+
+    ### ***Example***
+    Allow Anti-Hunt 10 milliseconds after a motion is completed.\
+    *@16 230 83 (CR)*
+    ### ***Response***
+    ACK only
 - ## AHM (Anti-Hunt Mode)
+    ### ***Description***
+    >The default mode of Anti-Hunt automatically switches from open loop to closed loop as
+    soon as a motion begins, and then remains in closed loop for Anti-Hunt Delay time
+    counts after the motion as completed and the position error is less than the Closed to
+    Open parameter. Anti-Hunt Mode with Mode=1 bypasses the in motion check, allowing
+    the servo to remain in open loop, even while moving, as long as the error is sufficiently
+    low. A value of Mode = 0 switches the Anti-Hunt function back to its default mode of
+    operation.\
+    \
+    With Mode = 1, some Anti-Hunt Delay (AHD) is useful to keep from switching between
+    moving and stopped while moving at low speeds.
+    ### ***Command Info***
+    | Command | Command Type/Num | Parameters | Param Type | Parameter Range |
+    | --- | --- | --- | --- | --- |
+    | AHM | Program<br>Class D<br>219 (0xDB)<br>2 words<br>Thread 1 | Mode | S16 | 0 or 1<br>0 = only when stopped (Default)<br>1 = moving or stopped |
+
+    ### ***Example***
+    Allow Anti-Hunt Mode only while stopped.\
+    *@16 219 0 (CR)*
+    ### ***Response***
+    ACK only
 - ## BRT (Baud Rate)
     ### ***Description***
     >This command is used to change the devices baud rate.\
@@ -83,7 +156,7 @@
     *@16 174 576 (CR)*
     ### ***Response***
     ACK only
-- ## CER(Command Error Recovery)
+- ## CER (Command Error Recovery)
     ### ***Description***
     >CER sets up options for recovery from a Command Error. Command Errors occur
     when the device is programmed to do something it cannot due. For example, a
@@ -105,7 +178,7 @@
     *@16 65 1000 (CR)*
     ### ***Response***
     ACK only
-- ## DIR(Direction)
+- ## DIR (Direction)
     ### ***Description***
     >Establishes the direction in which the servo will turn given a motion in a positive
     direction. Normally the device will turn Clockwise (when viewed from the shaft end of
@@ -127,7 +200,7 @@
     *@16 184 0 (CR)*
     ### ***Response***
     ACK only
-- ## DMD(Disable Motor Driver)
+- ## DMD (Disable Motor Driver)
     ### ***Description***
     >Disables the motor driver. The device will be unable to move when attempting any
     motion command. This is a software disable that can be overcome by the Enable Motor
@@ -142,7 +215,7 @@
     *@16 228 (CR)*
     ### ***Response***
     ACK only
-- ## EMD(Enable Motor Driver)
+- ## EMD (Enable Motor Driver)
     ### ***Description***
     >Enables the device motor driver. The driver is by default enabled, this command is only
     required if the driver has been disabled using the Disable Motor Driver (DMD)
@@ -168,7 +241,7 @@
     *@16 227 (CR)*
     ### ***Response***
     ACK only
-- ## ERL(Error Limits)
+- ## ERL (Error Limits)
     ### ***Description***
     >The Error Limits command sets allowable position error before the Holding and/or
     Moving Error bits are set in various status words (see Status Words in User Manual for
@@ -200,7 +273,7 @@
     *@16 151 500 100 1000 (CR)*
     ### ***Response***
     ACK only
-- ## GCL(Go Closed Loop)
+- ## GCL (Go Closed Loop)
     ### ***Description***
     >Puts the device into closed loop operation. This is typically only done one time during
     initialization. This command is used to put device into closed loop mode if the unit has
@@ -217,7 +290,7 @@
     *@16 142 (CR)*
     ### ***Response***
     ACK only
-- ## GOC(Gravity Offset Constant)
+- ## GOC (Gravity Offset Constant)
     ### ***Description***
     >Establishes a value that compensates for the effects of gravity on the load that the
     servo is driving. This servo control parameter is designed to neutralize the effect of
@@ -247,7 +320,7 @@
     *@16 237 7000 (CR)*
     ### ***Response***
     ACK only
-- ## GOL(Go Open Loop)
+- ## GOL (Go Open Loop)
     ### ***Description***
     >Puts the device into open loop operation. This is the default servo power up mode. This
     command is used during servo initialization to aid in aligning the rotor to the encoder.\
@@ -267,7 +340,7 @@
     *@16 143 (CR)*
     ### ***Response***
     ACK only
-- ## KDD(Kill Disable Driver)
+- ## KDD (Kill Disable Driver)
     ### ***Description***
     >Disables the motor driver, when a Kill Motor Condition is met. If the device is moving, it
     will stop immediately in a rapid manner. The motor will be unable to move until reenabled using the Enable Motor Driver (KMD) command. This is the default setting for the servo.\
@@ -284,7 +357,7 @@
     *@16 183 (CR)*
     ### ***Response***
     ACK only
-- ## KED(Kill Enable Driver)
+- ## KED (Kill Enable Driver)
     ### ***Description***
     >Causes the device to leave the motor drivers enabled when a Kill Motor Condition is
     met. Normally the motor driver is disabled with a Kill Motor Condition, this command
@@ -306,7 +379,7 @@
     *@16 182 (CR)*
     ### ***Response***
     ACK only
-- ## KMC(Kill Motor Conditions)
+- ## KMC (Kill Motor Conditions)
     ### ***Description***
     >The Kill Motor Conditions allows the user to select what conditions will allow a
     controlled shutdown of the unit. The Condition Enable word selects which bits in the
@@ -340,7 +413,7 @@
     *@16 167 400 256 (CR)*
     ### ***Response***
     ACK only
-- ## KMX(Kill Motor Conditions Extended)
+- ## KMX (Kill Motor Conditions Extended)
     ### ***Description***
     >The Extended version of Kill Motor Conditions (KMC) provides 3 status and I/O words
     of conditions that may be selected to allow a controlled shutdown of the unit. The three
@@ -373,7 +446,7 @@
     *@16 167 400 256 0 0 0 0 (CR)*
     ### ***Response***
     ACK only
-- ## KMR(Kill Motor Recovery)
+- ## KMR (Kill Motor Recovery)
     ### ***Description***
     >Kill Motor Recovery sets up options for recovery from a device shut down. The Kill
     Motor Conditions (KMC) establishes conditions that will cause the device to shut down.
@@ -405,7 +478,7 @@
     *@16 181 542 (CR)*
     ### ***Response***
     ACK only
-- ## LVP(Low Voltage Processor Trip)
+- ## LVP (Low Voltage Processor Trip)
     ### ***Description***
     >This command is only usable with units that provide separate power supply inputs for
     the processor and for the driver sections. This command allows the monitoring of the
@@ -426,7 +499,7 @@
     *@16 131 10 (CR)*
     ### ***Response***
     ACK only
-- ## LVT(Low Voltage Trip)
+- ## LVT (Low Voltage Trip)
     ### ***Description***
     >This command sets the input voltage (or driver Input voltage for units that have dual
     input power supplies) that will trigger a Low Voltage status (Bit #14 in the Internal
@@ -444,7 +517,7 @@
     *@16 212 10 (CR)*
     ### ***Response***
     ACK only
-- ## MTT(Maximum Temperature Trip)
+- ## MTT (Maximum Temperature Trip)
     ### ***Description***
     >Sets the temperature at which the device will shut down the servo. This is used to
     prevent internal over-heating of the servo electronics. The value is entered in degrees
@@ -462,7 +535,7 @@
     *@16 214 70 (CR)*
     ### ***Response***
     ACK only
-- ## OVT(Over Voltage Trip)
+- ## OVT (Over Voltage Trip)
     ### ***Description***
     >Sets the voltage at which the device will cause a motor shutdown. This command is
     mainly used to prevent over-voltage from the power regenerated during deceleration.
@@ -496,7 +569,7 @@
     *@16 212 52 (CR)*
     ### ***Response***
     ACK only
-- ## PLR(Power Low Recovery)
+- ## PLR (Power Low Recovery)
     ### ***Description***
     >This command designates which program will run if the power supplies voltage drops
     below that specified by the Low Voltage Trip (LVT) command or Low Voltage
@@ -525,7 +598,7 @@
 
     ### ***Response***
     ACK only
-- ## PRO(Protocol)
+- ## PRO (Protocol)
     ### ***Description***
     >Allows the user to select the desired communications protocol.\
     \
@@ -553,7 +626,7 @@
     *@16 185 1 (CR)*
     ### ***Response***
     ACK only
-- ## SCF(S-Curve Factor)
+- ## SCF (S-Curve Factor)
     ### ***Description***
     >The shape of motion profile acceleration can be set from linear to full s-curve. This
     command can be set at any time except for during a motion. SCF only affects the
@@ -573,7 +646,7 @@
     *@16 195 10813 (CR)*
     ### ***Response***
     ACK only
-- ## SIF(Serial Interface)
+- ## SIF (Serial Interface)
     ### ***Description***
     >Allows the user to select between RS-232 and RS-485 serial communications
     hardware interface. This command is usually used at power up as part of the
@@ -603,7 +676,7 @@
     *@16 186 0 (CR)*
     ### ***Response***
     ACK only
-- ## SLC(Single Loop Control)
+- ## SLC (Single Loop Control)
     ### ***Description***
     >Configures the device to run in the standard single loop control mode. Encoder
     information for commutation, position, velocity and acceleration control is derived from
@@ -630,7 +703,7 @@
     *@16 244 (CR)*
     ### ***Response***
     ACK only
-- ## TQL(Torque Limits)
+- ## TQL (Torque Limits)
     ### ***Description***
     >This command sets the torque limits for the different operating modes of the servo. The
     unit may be in either Open Loop or Closed Loop mode, and in either Moving or Molding
@@ -655,7 +728,7 @@
     *@16 149 15000 20000 6000 10000(CR)*
     ### ***Response***
     ACK only
-- ## VLL(Velocity Limits)
+- ## VLL (Velocity Limits)
     ### ***Description***
     >This command sets a limiter value within the servo control loop so as to limit the
     maximum velocity of the servo system. Both Moving and Holding limits are provided.
@@ -689,7 +762,7 @@
     ACK only
 
 ## MOVEMENT COMMANDS
-- ## HLT(Halt)
+- ## HLT (Halt)
     ### ***Description***
     >This command immediately shuts down any motion in progress (hard stop), disables the
     single step mode, and then causes the motor to load and run the Kill Motor Recovery
@@ -714,7 +787,7 @@
     *@16 2 (CR)*
     ### ***Response***
     ACK only
-- ## MAT(Move Absolute, Time Baised)
+- ## MAT (Move Absolute, Time Baised)
     ### ***Description***
     >Move Absolute initiates a move to an absolute position.\
     \
@@ -736,7 +809,7 @@
     *@16 176 200 83 8333 0 0(CR)*
     ### ***Response***
     ACK only
-- ## MAV(Move Absolute, Velocity Baised)
+- ## MAV (Move Absolute, Velocity Baised)
     ### ***Description***
     >Move Relative initiates a distance move relative to the current target position.\
     \
@@ -759,7 +832,7 @@
     *@16 177 4000 833 8333 0 0 (CR)*
     ### ***Response***
     ACK only
-- ## MRT(Move Relative, Time Baised)
+- ## MRT (Move Relative, Time Baised)
     ### ***Description***
     >Move Relative initiates a distance move relative to the current target position.\
     \
@@ -782,7 +855,7 @@
     *@16 177 4000 833 8333 0 0 (CR)*
     ### ***Response***
     ACK only
-- ## MRV(Move Relative, Velocity Baised)
+- ## MRV (Move Relative, Velocity Baised)
     ### ***Description***
     >Move Relative initiates a distance move relative to the current target position.\
     \
@@ -806,7 +879,7 @@
     *@16 135 -4000 3865 8053064 0 0(CR)*
     ### ***Response***
     ACK only
-- ## PMC(Profile Move Continuous)
+- ## PMC (Profile Move Continuous)
     ### ***Description***
     >The Profile Move commands are distinct from the Motion commands in that the move
     parameters can be modified while the motion is in progress. A change in a move
@@ -883,7 +956,7 @@
     *@16 240 –1 1 (CR)*
     ### ***Response***
     ACK only
-- ## PMO(Profile Move Override)
+- ## PMO (Profile Move Override)
     ### ***Description***
     >The Profile Move Override command allows a Profile Move Continuous to end when the
     Position is achieved. Normally the Move Continuous will not end until explicitly stopped
@@ -910,7 +983,7 @@
     *@16 249 –1 1 (CR)*
     ### ***Response***
     ACK only
-- ## PMV(Profile Move)
+- ## PMV (Profile Move)
     ### ***Description***
     >The Profile Move command works identical to the Profile Move Continuous except that
     when the Position is achieved, the move ends and the trajectory generator goes
@@ -932,7 +1005,7 @@
     *@16 241 –1 1 (CR)*
     ### ***Response***
     ACK only
-- ## PMX(Profile Move Exit)
+- ## PMX (Profile Move Exit)
     ### ***Description***
     >Exits the current Profile Move allowing the move to stop using the Deceleration
     parameter stored in Data Register #23. This command will work to stop any Motion,
@@ -948,7 +1021,7 @@
     *@12 242 (CR)*
     ### ***Response***
     ACK only
-- ## PVC(Profile Velocity Continuous)
+- ## PVC (Profile Velocity Continuous)
     ### ***Description***
     >PVC accelerates the servo to the register based velocity using the register based
     acceleration. During the move, any move parameter can be updated. With the
@@ -990,7 +1063,7 @@
     *@16 93 0 21 0 0(CR)*
     ### ***Response***
     ACK only
-- ## STP(Stop)
+- ## STP (Stop)
     ### ***Description***
     >The Stop command exits the executing program or motion. If a motion is running, the
     Deceleration parameter sets the deceleration as follows: If the parameter is zero, the
@@ -1013,7 +1086,7 @@
     *@16 3 0 (CR)*
     ### ***Response***
     ACK only
-- ## VMI(Velocity Mode, Immediate Mode)
+- ## VMI (Velocity Mode, Immediate Mode)
     ### ***Description***
     >Accelerates the servo from the present velocity to the indicated velocity using the given
     acceleration. If the servo has an active move operation in progress, that motion is taken
@@ -1044,7 +1117,7 @@
     ACK only
 
 ## DATA REGISTER COMMANDS
-- ## RRG(Read Register)
+- ## RRG (Read Register)
     ### ***Description***
     >The Read Register command reads back data from a selected 32-Bit Data Register
     using the Serial Interface. Since it is an Immediate Mode, this command can be used at
@@ -1073,7 +1146,7 @@
     | :---: | :---: | :---: | :---: | :---: | :---: |
     | # | 10 | 000C | 0005 | 06A3 | (CR) |
 
-- ## WRI(Write Register, Immediate Mode)
+- ## WRI (Write Register, Immediate Mode)
     ### ***Description***
     >This command writes the given data into the selected 32 bit Data Register. Using the
     Serial Interface this command can be used at any time, even during program execution.
@@ -1089,7 +1162,7 @@
     ACK only
 
 ## MISC. COMMANDS
-- ## CIS(Clear Internal Status)
+- ## CIS (Clear Internal Status)
     ### ***Description***
     >The Internal Status Word (ISW) is used to indicate different conditions or states in the
     device (see Internal Status Word (ISW) in User Manual for details). Several of the
@@ -1111,7 +1184,7 @@
     *@16 163 (CR)*
     ### ***Response***
     ACK only
-- ## CKS(Check Internal Status)
+- ## CKS (Check Internal Status)
     ### ***Description***
     >This command checks the conditions of the Internal Status Word in the same manner
     as does the Jump command. If the condition enabled is true, bit #6 of the Polling Status
@@ -1130,7 +1203,7 @@
     *@16 164 4 4 (CR)*
     ### ***Response***
     ACK only
-- ## CME(Clear Max Error)
+- ## CME (Clear Max Error)
     ### ***Description***
     >The Maximum Error (absolute value of the Position Error) is updated and latched each
     servo cycle. The value is limited to a single word, saturating at 32767 (0x7FFF) as a
@@ -1149,7 +1222,7 @@
     *@16 147 (CR)*
     ### ***Response***
     ACK only
-- ## TTP(Target To Position)
+- ## TTP (Target To Position)
     ### ***Description***
     >This command copies the current Position value into the Target register. This is useful
     for removing errors when an obstruction is encountered without losing track of position.
@@ -1172,7 +1245,7 @@
     *@16 146 (CR)*
     ### ***Response***
     ACK only
-- ## ZTP(Zero Target and Position)
+- ## ZTP (Zero Target and Position)
     ### ***Description***
     >This command zeros the Target register and the Position register. This command zeros
     out both registers and removes any Position Error that may exist. This is useful for
