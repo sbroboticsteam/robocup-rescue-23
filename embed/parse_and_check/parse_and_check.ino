@@ -21,6 +21,12 @@ Step 3:
 #define DEBUGSERIAL Serial
 #define COMMSERIAL Serial  // Change this back to `Serial1` when using Arduino Mega
 
+
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
+
+
+
 bool promptSent = false;
 
 const String ErrorCodes[9] = {
@@ -45,12 +51,53 @@ struct command {
 
 /// Commands ///
 
-String pwmFunc(uint8_t channel, uint16_t hz) {
-  return "good value :)";
-}
+
+
+uint16_t hzArray[16] = {0};
+
+// called this way, it uses the default address 0x40
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+
+
+String pwmFunc(uint8_t channel, uint16_t hz) 
+{
+    //check to see if its a valid channel
+    if(channel >= 16)
+    {
+      return String("1,0");
+    }
+
+
+    //check if freq is to low
+    if(hz < 40)
+    {
+      return String("1,0");
+    }
+
+    //check if freq is to high
+    if(hz > 1600)
+    {
+      return String("1,0");
+    }
+
+
+
+    pwm.setPWMFreq(hz); 
+
+    hzArray[channel] = hz; //ensure we keep track of each of the HZ
+    
+
+    return String("0," + String(hz, DEC));
+
+
+
+
 
 String pwmDuty(uint8_t channel, uint16_t dutyCyle) {
   return "good value";
+
+
+  // pwm.setPWM(15, 0, (int)(4096 * (1.0 - dudyDouble)));
 }
 
 String pwmGetVal(uint8_t channel) {
@@ -63,8 +110,17 @@ String pwmGetVal(uint8_t channel) {
  * @brief Loop that only runs once, used to set up Serial
  */
 void setup() {
+
+
+
+ pwm.begin();
+ pwm.setOscillatorFrequency(27000000);
+ Wire.setClock(400000);
+   
+
   DEBUGSERIAL.begin(9600);
   COMMSERIAL.begin(9600);
+
 }
 
 /**
@@ -259,10 +315,12 @@ void loop() {
       return;
     }
 
+
     if (!validate(currentCommand)) {
       COMMSERIAL.println(ErrorCodes[currentCommand.validity]);
       promptSent = false;
       return;
+
     }
 
     COMMSERIAL.println(sendCommand(currentCommand));
