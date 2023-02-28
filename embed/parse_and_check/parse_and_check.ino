@@ -1,6 +1,12 @@
 #define MAXPARAMS 4       // TODO - What value should this actually be?
 #define PLACEHOLDER -420  // TODO - need to find a good placeholder value that will never actually be used
 
+
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
+
+
+
 bool promptSent = false;
 
 
@@ -23,12 +29,55 @@ struct command {
 ** line 58 is preclear params still needed with line 8?
 */
 
-String pwmFunc(uint8_t channel, uint8_t hz) {
-  return "good value";
+
+
+uint16_t hzArray[16] = {0};
+
+// called this way, it uses the default address 0x40
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+
+
+String pwmFunc(uint8_t channel, uint16_t hz) 
+{
+    //check to see if its a valid channel
+    if(channel >= 16)
+    {
+      return String("1,0");
+    }
+
+
+    //check if freq is to low
+    if(hz < 40)
+    {
+      return String("1,0");
+    }
+
+    //check if freq is to high
+    if(hz > 1600)
+    {
+      return String("1,0");
+    }
+
+
+
+    pwm.setPWMFreq(hz); 
+
+    hzArray[channel] = hz; //ensure we keep track of each of the HZ
+    
+
+    return String("0," + String(hz, DEC));
+
+
+
+
+
 }
 
 String pwmDuty(uint8_t channel, uint8_t dutyCyle) {
   return "good value";
+
+
+  // pwm.setPWM(15, 0, (int)(4096 * (1.0 - dudyDouble)));
 }
 
 String pwmGetVal(uint8_t channel) {
@@ -37,7 +86,12 @@ String pwmGetVal(uint8_t channel) {
 
 void setup() {
   Serial.begin(9600);
-  Serial1.begin(9600); 
+  Serial1.begin(9600);
+
+
+ pwm.begin();
+ pwm.setOscillatorFrequency(27000000);
+ Wire.setClock(400000);
    
 }
 
@@ -234,6 +288,15 @@ void loop() {
 
     if (validate(currentCommand)) {
       Serial1.println("Validated Successfully");
+
+
+
+      Serial1.println("*****");
+      Serial1.println(sendCommand(currentCommand));
+      Serial1.println("*****");
+
+
+
     } else {
       Serial1.println("Error during validation");
       //------------------------------
