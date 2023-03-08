@@ -43,7 +43,7 @@ const String ErrorCodes[9] = {
 
 struct command {
   String type;
-  int params[MAXPARAMS] = { -420, -420, -420, -420 };  // If MAXPARAMS is changed this needs to be as well
+  int params[MAXPARAMS] = { -420, -420, -420, -420};  // If MAXPARAMS is changed this needs to be as well
   uint8_t paramCount;
   uint8_t validity;
   bool validated = false;
@@ -53,20 +53,15 @@ struct command {
 
 
 
-uint16_t hzArray[16] = {0};
+
 
 // called this way, it uses the default address 0x40
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 
-String pwmFunc(uint8_t channel, uint16_t hz) 
+String pwmFunc( uint16_t hz) 
 {
-    //check to see if its a valid channel
-    if(channel >= 16)
-    {
-      return String("1,0");
-    }
-
+   
 
     //check if freq is to low
     if(hz < 40)
@@ -84,24 +79,59 @@ String pwmFunc(uint8_t channel, uint16_t hz)
 
     pwm.setPWMFreq(hz); 
 
-    hzArray[channel] = hz; //ensure we keep track of each of the HZ
+    //hzArray[channel] = hz; //ensure we keep track of each of the HZ
     
 
     return String("0," + String(hz, DEC));
 
 
+}
 
-
+uint16_t dutyCyleArray[16] = {0};
 
 String pwmDuty(uint8_t channel, uint16_t dutyCyle) {
-  return "good value";
+  
+
+  //check to see if its a valid channel
+  if(channel >= 16)
+  {
+    return String("1,0");
+  }
 
 
-  // pwm.setPWM(15, 0, (int)(4096 * (1.0 - dudyDouble)));
+
+  //check if dutyCyle is to high
+  if(dutyCyle > 10000)
+  {
+    return String("1," +String(dutyCyleArray[channel]/100.0));
+  }
+
+  //keep track of the dutyCyles
+
+  dutyCyleArray[channel] = dutyCyle;
+
+
+  double d = dutyCyle / 10000.0;  
+
+  pwm.setPWM(channel, 0, (int)(4096 * (d)));
+
+  return String("0," +String(dutyCyleArray[channel]/100.0));
+
+  // pwm.setPWM(15, 0, (int)(4096 * (dudyDouble)));
 }
 
 String pwmGetVal(uint8_t channel) {
-  return "good value - need one here too :0";
+  
+  //check to see if its a valid channel
+  if(channel >= 16)
+  {
+    return String("1,0");
+  }
+
+
+   return String("0," +String(dutyCyleArray[channel]/100.0));
+
+
 }
 
 /// End commands ///
@@ -115,6 +145,7 @@ void setup() {
 
  pwm.begin();
  pwm.setOscillatorFrequency(27000000);
+ pwm.setPWMFreq(50);  // This is the maximum PWM frequency
  Wire.setClock(400000);
    
 
@@ -188,18 +219,14 @@ command parse(String inputString) {
  */
 bool validate(command &cmd) {
   if (cmd.type.equals("pwmFunc")) {
-    // Needs 2 params
-    if (cmd.paramCount != 2) {
+    // Needs 1  params
+    if (cmd.paramCount != 1) {
+
       cmd.validity = 5;
       return false;
     }
-    // Param 1 is between 0 and 15
-    if (cmd.params[0] < 0 || cmd.params[0] > 15) {
-      cmd.validity = 6;
-      return false;
-    }
-    // Param 2 is between 0 and 1600
-    if (cmd.params[1] < 0 || cmd.params[1] > 1600) {
+    // Param 1 is between 0 and 1600
+    if (cmd.params[0] < 0 || cmd.params[0] > 1600) {
       cmd.validity = 6;
       return false;
     }
@@ -258,12 +285,10 @@ String sendCommand(command cmd) {
   }
 
   if (cmd.type.equals("pwmFunc")) {
-    // Convert param 1 to uint8_t
-    uint8_t p1 = (uint8_t)cmd.params[0];
-    // Convert param 2 to uint16_t
-    uint16_t p2 = (uint16_t)cmd.params[1];
+    // Convert param 1 to uint16_t
+    uint16_t p1 = (uint16_t)cmd.params[1];
     // Send command
-    return pwmFunc(p1, p2);
+    return pwmFunc(p1);
   } else if (cmd.type.equals("pwmDuty")) {
     // Convert param 1 to uint8_t
     uint8_t p1 = (uint8_t)cmd.params[0];
