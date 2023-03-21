@@ -6,6 +6,7 @@ from serial.tools.list_ports import comports
 
 # TODO - Verify anywhere that uses stopEnable / stopState
 
+
 class NEMA34():
 
     COMMANDS = {
@@ -97,16 +98,16 @@ class NEMA34():
         CID = 20
         self.execute(CID)
 
-    def AHC(self, openToClosed: int, closedToOpen: int): 
+    def AHC(self, openToClosed: int, closedToOpen: int):
         if openToClosed < 0 or openToClosed > 140:
             logging.error(f"Open to closed ${openToClosed} is invalid")
             return
         if closedToOpen < -140 or closedToOpen > 140:
             logging.error(f"Closed to open ${closedToOpen} is invalid")
             return
-        
+
         CID = 150
-        self.execute(CID)
+        self.execute(CID, openToClosed, closedToOpen)
 
     def AHD(self, delayCount: int = 1250):
         if delayCount < 0 or delayCount > 65535:
@@ -124,7 +125,7 @@ class NEMA34():
         CID = 219
         self.execute(CID, mode)
 
-    def BRT(self, speed: int = 576): 
+    def BRT(self, speed: int = 576):
         possibles = [3, 12, 24, 48, 96, 192, 288,
                      384, 576, 1000, 1152, 2304, 2500]
         if speed not in possibles and (speed < -32767 or speed > -11):
@@ -176,7 +177,7 @@ class NEMA34():
         CID = 142
         self.execute(CID)
 
-    def GOC(self, gravityOffset: int = 0): 
+    def GOC(self, gravityOffset: int = 0):
         if gravityOffset < -32768 or gravityOffset > 32767:
             logging.error(f"Gravity offset ({gravityOffset}) out of range")
             return
@@ -196,7 +197,7 @@ class NEMA34():
         CID = 182
         self.execute(CID)
 
-    def KMC(self, conditionEnable: int, conditionState: int): 
+    def KMC(self, conditionEnable: int, conditionState: int):
         if conditionEnable < 0 or conditionEnable > 65535:
             logging.error(f"Condition enable ({conditionEnable}) out of range")
             return
@@ -279,9 +280,11 @@ class NEMA34():
         CID = 208
         self.execute(CID, process)
 
-    def PRO(self, word: int):  
-        # TODO - parse 16 bit word 
-        
+    def PRO(self, word: int):
+        if word < -32768 or word > 32767:
+            logging.error(f"Word is invalid")
+            return
+
         CID = 185
         self.execute(CID, word)
 
@@ -352,10 +355,10 @@ class NEMA34():
         if totalTime < 2 or totalTime > 2147483647:
             logging.error(f"Total time ({totalTime}) out of range")
             return
-        if stopEnable < 0 or stopEnable > 32767: 
+        if stopEnable < 0 or stopEnable > 32767:
             logging.error(f"Stop enable invalid")
             return
-        if stopState not in {0,1,2,3}:  
+        if stopState not in {0, 1, 2, 3}:
             logging.error(f"Stop state is invalid")
             return
 
@@ -373,10 +376,10 @@ class NEMA34():
         if totalTime < 2 or totalTime > 2147483648:
             logging.error(f"Total time ({totalTime}) out of range")
             return
-        if stopEnable < 0 or stopEnable > 32767: 
+        if stopEnable < 0 or stopEnable > 32767:
             logging.error(f"Stop enable invalid")
             return
-        if stopState not in {0,1,2,3}:  
+        if stopState not in {0, 1, 2, 3}:
             logging.error(f"Stop state is invalid")
             return
 
@@ -394,10 +397,10 @@ class NEMA34():
         if totalTime < 2 or totalTime > 2147483648:
             logging.error(f"Total time ({totalTime}) out of range")
             return
-        if stopEnable < 0 or stopEnable > 32767: 
+        if stopEnable < 0 or stopEnable > 32767:
             logging.error(f"Stop enable invalid")
             return
-        if stopState not in {0,1,2,3}: 
+        if stopState not in {0, 1, 2, 3}:
             logging.error(f"Stop state is invalid")
             return
 
@@ -414,10 +417,10 @@ class NEMA34():
         if velocity < 2 or velocity > 2147483648:
             logging.error(f"Velocity ({velocity}) out of range")
             return
-        if stopEnable < 0 or stopEnable > 32767: 
+        if stopEnable < 0 or stopEnable > 32767:
             logging.error(f"Stop enable invalid")
             return
-        if stopState not in {0,1,2,3}: 
+        if stopState not in {0, 1, 2, 3}:
             logging.error(f"Stop state is invalid")
             return
 
@@ -426,55 +429,57 @@ class NEMA34():
                      velocity, stopEnable, stopState)
 
     def PMC(self, stopEnable: int, stopState: int):
-        if stopEnable < 0 or stopEnable > 32767: 
+        if stopEnable < 0 or stopEnable > 32767:
             logging.error(f"Stop enable invalid")
             return
-        if stopState not in {0,1,2,3}: 
+        if stopState not in {0, 1, 2, 3}:
             logging.error(f"Stop state is invalid")
             return
 
         CID = 240
         self.execute(CID, stopEnable, stopState)
 
-    def PMO(self, stopEnable: int, stopState: int): 
-        if stopEnable < 0 or stopEnable > 32767: 
+    def PMO(self, stopEnable: int, stopState: int):
+        if stopEnable < 0 or stopEnable > 32767:
             logging.error(f"Stop enable invalid")
             return
-        if stopState not in {0,1,2,3}:  
+        if stopState not in {0, 1, 2, 3}:
             logging.error(f"Stop state is invalid")
             return
 
         CID = 249
-        self.execute(CID)
+        self.execute(CID, stopEnable, stopState)
 
-    def PMV(self, stopEnable, stopState):  
-        if stopEnable < 0 or stopEnable > 32767: 
+    def PMV(self, stopEnable, stopState):
+        if stopEnable < 0 or stopEnable > 32767:
             logging.error(f"Stop enable invalid")
             return
-        if stopState not in {0,1,2,3}:  
+        if stopState not in {0, 1, 2, 3}:
             logging.error(f"Stop state is invalid")
             return
 
         CID = 241
-        self.execute(CID)
+        self.execute(CID, stopEnable, stopState)
 
     def PMX(self):
         CID = 242
         self.execute(CID)
 
-    def PVC(self, mode: int = 0, startingDataRegister: int, stopEnable: int, stopState: int): 
-        # TODO - verify bits in the mode word
+    def PVC(self, startingDataRegister: int, stopEnable: int, stopState: int, mode: int = 0):
+        if mode < -32678 or mode > 32767:
+            logging.error(f"Mode is invalid")
+            return
         if startingDataRegister < 11 or startingDataRegister > 98:
             logging.error(
                 f"Starting data register ({startingDataRegister}) is out of range")
             return
-        if stopEnable < 0 or stopEnable > 32767: 
+        if stopEnable < 0 or stopEnable > 32767:
             logging.error(f"Stop enable invalid")
             return
-        if stopState not in {0,1,2,3}: 
+        if stopState not in {0, 1, 2, 3}:
             logging.error(f"Stop state is invalid")
             return
-        
+
         CID = 93
         self.execute(CID, mode, startingDataRegister, stopEnable, stopState)
 
@@ -486,23 +491,58 @@ class NEMA34():
         CID = 3
         self.execute(CID, deceleration)
 
-    # TODO
-    def VMI(self):  
-        
-        CID = 15
-        self.execute(CID)
-        
-    # TODO
-    def RRG(self):  
-        
-        CID = 12
-        self.execute(CID)
+    def VMI(self, acceleration: int, velocity: int, stopEnable: int, stopState: int):
+        if acceleration < -1073741823 or acceleration > 1073741823 or acceleration == 0:
+            logging.error(f"Acceleration ${acceleration} is invalid")
+            return
+        if velocity < -2147483648 or acceleration > 2147483647:
+            logging.error(f"Velocity ${velocity} is invalid")
+            return
+        if stopEnable < 0 or stopEnable > 32767:
+            logging.error(f"Stop enable invalid")
+            return
+        if stopState not in {0, 1, 2, 3}:
+            logging.error(f"Stop state is invalid")
+            return
 
-    # TODO
-    def WRI(self):  
-        
+        CID = 15
+        self.execute(CID, acceleration, velocity, stopEnable, stopState)
+
+    # TODO fix standard register range and optional commands
+    def RRG(self, dataRegister: int, dataRegister2: int = -1, dataRegister3: int = -1, dataRegister4: int = -1):
+        # Check if registers are within Standard Register Range (TM)
+        if dataRegister < 0 or dataRegister > 1:
+            logging.error(f"Data register 1 is invalid")
+            return
+
+        for dReg in {dataRegister2, dataRegister3, dataRegister4}:
+            if dReg != -1:
+                if dReg < 0 or dReg > 1:
+                    logging.error(f"Data register is invalid")
+                    return
+
+        # This is confusing, would this work??
+        CID = 12
+        if dataRegister2 == -1:
+            self.execute(CID, dataRegister)
+        if dataRegister3 == -1:
+            self.execute(CID, dataRegister, dataRegister2)
+        if dataRegister4 == -1:
+            self.execute(CID, dataRegister, dataRegister2, dataRegister3)
+        self.execute(CID, dataRegister, dataRegister2,
+                     dataRegister3, dataRegister4)
+
+    def WRI(self, dataRegister: int, data: int):
+        # TODO - What is a standard register range??????
+        if dataRegister == False:  # Fix this
+            logging.error("Data register is invalid")
+            return
+        if (data < 0 or data > 4294967295) and (data < -2147483648 or data > 2147483647):
+            logging.error(f"Data is invalid ${data}")
+            return
+
         CID = 11
-        self.execute(CID)
+        self.execute(CID, dataRegister, data)
 
     def CIS(self):
         CID = 163
