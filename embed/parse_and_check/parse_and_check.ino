@@ -1,3 +1,4 @@
+
 /*
 This is the code that will receive a command from the jetson using UART (Serial1 in this case), take in that string and
 then parse it into a command. This command will then be put into a struct (aptly named command), which holds the type of
@@ -9,7 +10,7 @@ To add new commands:
 Step 1:
   Create the command as a function within the `commands` section (currently line 45 but will inevitably change)
 Step 2:
-  Within the `parse` function create a new else if case for your new command, and add in whatever limits it needs
+  Within the `validate` function create a new else if case for your new command, and add in whatever limits it needs
   (needs X amount of params, and param[X] needs to be within a certain range)
 Step 3:
   Within the `sendCommand` function create a new else if case for your new command, and convert/cast/whatever needs to
@@ -25,9 +26,15 @@ Step 3:
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
+#include <HCSR04.h>
 
 
 bool promptSent = false;
+
+
+#define INVALID_COMMAND 2
+
+#define WRONG_NUM_PARAM 5
 
 const String ErrorCodes[9] = {
   "No parameters",                        // 0
@@ -55,8 +62,66 @@ struct command {
 
 
 
+
+
+
+
+
+  HCSR04Sensor distanceSensor[4];
+
+
+
+  //retuns distance of given distence sensor (0 to 3)
+  String dist(uint8_t sensorNun)
+  {
+    //check if number is bigger than 3
+    if(sensorNun > 3)
+    {
+      return "-1";
+    }
+
+    double * dist_cm;
+
+    dist_cm = distanceSensor[sensorNun].measureDistanceCm();
+
+
+    return String(dist_cm[0]);
+
+    
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // called this way, it uses the default address 0x40
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+
+
+
 
 
 String pwmFunc( uint16_t hz) 
@@ -152,6 +217,15 @@ void setup() {
   DEBUGSERIAL.begin(9600);
   COMMSERIAL.begin(9600);
 
+
+
+//setup the distance sensors
+//TODO: add sensors 1 to 3
+
+ 
+  distanceSensor[0].begin(7, 8);
+
+
 }
 
 /**
@@ -182,6 +256,9 @@ command parse(String inputString) {
   int paramIndex = 0;
   while (spaceIndex != -1) {
     if (inputString.substring(0, spaceIndex).toInt() == 0) {
+      
+ 
+      
       toReturn.validity = 3;
       return toReturn;
     }
@@ -192,8 +269,13 @@ command parse(String inputString) {
     paramIndex++;
   }
 
+  //TODO: interigate this evil function (alegidly)
+
   // Get the last parameter since it doesnt have a trailing space
-  if (inputString.substring(spaceIndex + 1).toInt() == 0) {
+  if (inputString.substring(spaceIndex + 1).equals("")) {
+
+     DEBUGSERIAL.println("sup");
+
     toReturn.validity = 3;
     return toReturn;
   }
@@ -253,7 +335,8 @@ bool validate(command &cmd) {
     cmd.validated = true;
     return true;
   } else if (cmd.type.equals("pwmGetVal")) {
-    // Needs 1 param
+
+
     if (cmd.paramCount != 1) {
       cmd.validity = 5;
       return false;
@@ -266,7 +349,25 @@ bool validate(command &cmd) {
     // No issues found, must be valid
     cmd.validated = true;
     return true;
-  } else {
+  }
+   else if (cmd.type.equals("dist")) {
+
+    
+    if (cmd.paramCount != 1) {
+      cmd.validity = 5;
+      return false;
+    }
+    // Param 1 is between 0 and 3
+    if (cmd.params[0] < 0 || cmd.params[0] > 3) {
+      cmd.validity = 6;
+      return false;
+    }
+    // No issues found, must be valid
+    cmd.validated = true;
+    return true;
+  }
+  
+   else {
     cmd.validity = 7;
     return false;
   }
@@ -302,6 +403,13 @@ String sendCommand(command cmd) {
     // Send command
     return pwmGetVal(p1);
   }
+  else if (cmd.type.equals("dist")) {
+    // Convert param 1 to uint8_t
+    uint8_t p1 = (uint8_t)cmd.params[0];
+    // Send command
+    return dist(p1);
+  }
+  
   return "Command not found";
 }
 
