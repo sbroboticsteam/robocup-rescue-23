@@ -65,9 +65,9 @@ class NEMA34():
     def __init__(self, motor_port) -> None:
         logging.basicConfig(
             format='%(asctime)s %(message)s', level=logging.DEBUG)
-        #if motor_port not in [port.name for port in comports()]:
-        #if motor_port not in [str(port) for port in comports()]:
-        #    raise Exception("Invalid port entered.")
+        #Raise error when constructor is given invalid port number
+        if motor_port not in [port.name for port in comports()]:
+            raise Exception("Invalid port entered.")
 
         self.serial = serial.Serial(
             baudrate=57600,
@@ -573,13 +573,12 @@ class NEMA34():
         self.execute(CID)
 
     def execute(self, *args):
+        #*args is a tuple of values to be sent to the motor controller
         self.serial.write(self.encode(*args))
         logging.info(self.read())
 
     def encode(self, *args) -> bytes:
         ascii_string = f"@{self.id} {' '.join(map(str, args))} \r"
-        #Used below line when args was being passed into self.encode() in execute()
-        #ascii_string = f"@{self.id} {' '.join(map(str, args[0]))} \r"
         return ascii_string.encode()
 
     def read(self):
