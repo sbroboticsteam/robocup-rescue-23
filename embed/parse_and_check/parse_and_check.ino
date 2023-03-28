@@ -17,12 +17,19 @@ Step 3:
 */
 
 // Libraries Used:
-/// https://github.com/d03n3rfr1tz3/HC-SR04
+/// https://github.com/d03n3rfr1tz3/HC-SR04 
 /// https://github.com/adafruit/Adafruit_Sensor - not sure?
 /// https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library 
 
 /*
 Instructions for installing library:
+
+NOTE:
+
+HC-SR04 can be installed with the Arduino IDE 2.0 Libary manager by searching for:
+
+"HC_SR04" by bjoernboeckle
+"Adafruit-PWM-Servo-Driver-Library"
 
 Step 1: 
   Go to github and download the entire repo as a .zip file
@@ -33,6 +40,11 @@ Step 3:
 Step 4: 
   Profit ?
 */
+
+
+//https://forum.arduino.cc/t/newping-library-hc-sr04-srf05-srf06-dyp-me007-parallax-ping-v1-7/103737 we gotta look into THIS!
+
+//https://github.com/gamegine/HCSR04-ultrasonic-sensor-lib might also be good
 
 #define DEBUGSERIAL Serial
 #define COMMSERIAL Serial // Change this back to `Serial1` if using Arduino Mega
