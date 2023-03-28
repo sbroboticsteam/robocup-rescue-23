@@ -191,6 +191,10 @@ String pwmGetVal(uint8_t channel){
 /**
  * @brief Loop that only runs once, used to set up Serial
  */
+
+byte triggerPin = 7;  // base triggerpin for distanceSensor[0]
+byte echoPin = 8;     // base echoPin for distanceSensor[0]
+
 void setup(){
   /// Serial ///
   DEBUGSERIAL.begin(9600);
@@ -205,7 +209,8 @@ void setup(){
   /// End PWM ///
 
   /// Distance Sensors ///
-  distanceSensor[0].begin(7, 8); // TODO: add sensors 1 to 3
+  for (int i = 0; i < 4; i++)
+  distanceSensor[i].begin(triggerPin+2*i, echoPin+2*i); // TODO: add sensors 1 to 3
   /// End Distance Sensors ///
 }
 
