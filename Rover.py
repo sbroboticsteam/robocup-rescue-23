@@ -6,7 +6,7 @@ import base64
 context = zmq.Context()
 footage_socket = context.socket(zmq.REQ)
 
-footage_socket.connect('tcp://*:5555') # change * to the server IP
+footage_socket.connect('tcp://*:5557') # change * to the server IP
 
 
 camera = cv2.VideoCapture(0)    # init the camera. Adit and I had some trouble when 
