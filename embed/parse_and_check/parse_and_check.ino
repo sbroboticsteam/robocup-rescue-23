@@ -17,9 +17,9 @@ Step 3:
 */
 
 // Libraries Used:
-/// https://github.com/d03n3rfr1tz3/HC-SR04 
+/// https://github.com/d03n3rfr1tz3/HC-SR04
 /// https://github.com/adafruit/Adafruit_Sensor - not sure?
-/// https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library 
+/// https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library
 
 /*
 Instructions for installing library:
@@ -31,25 +31,24 @@ HC-SR04 can be installed with the Arduino IDE 2.0 Libary manager by searching fo
 "HC_SR04" by bjoernboeckle
 "Adafruit-PWM-Servo-Driver-Library"
 
-Step 1: 
+Step 1:
   Go to github and download the entire repo as a .zip file
-Step 2: 
+Step 2:
   Open Arduino IDE and click on Sketch > Include Library > Add .ZIP Library
-Step 3: 
+Step 3:
   Select downloaded .zip file
-Step 4: 
+Step 4:
   Profit ?
 */
 
+// https://forum.arduino.cc/t/newping-library-hc-sr04-srf05-srf06-dyp-me007-parallax-ping-v1-7/103737 we gotta look into THIS!
 
-//https://forum.arduino.cc/t/newping-library-hc-sr04-srf05-srf06-dyp-me007-parallax-ping-v1-7/103737 we gotta look into THIS!
-
-//https://github.com/gamegine/HCSR04-ultrasonic-sensor-lib might also be good
+// https://github.com/gamegine/HCSR04-ultrasonic-sensor-lib might also be good
 
 #define DEBUGSERIAL Serial
 #define COMMSERIAL Serial // Change this back to `Serial1` if using Arduino Mega
 
-bool promptSent = false;
+// bool promptSent = false;
 
 #define NO_PARAMS 0
 #define VALID 1
@@ -62,15 +61,15 @@ bool promptSent = false;
 #define COMMAND_NOT_VALIDATED 8
 
 const String ErrorCodes[9] = {
-  "No parameters",                       // 0
-  "Valid",                               // 1
-  "Invalid command",                     // 2
-  "Invalid paramters",                   // 3
-  "Something went wrong during parsing", // 4
-  "Wrong number of parameters",          // 5
-  "Paramter outside of possible range",  // 6
-  "Unknown command",                     // 7
-  "Command was not validated first"      // 8
+    "No parameters",                       // 0
+    "Valid",                               // 1
+    "Invalid command",                     // 2
+    "Invalid paramters",                   // 3
+    "Something went wrong during parsing", // 4
+    "Wrong number of parameters",          // 5
+    "Paramter outside of possible range",  // 6
+    "Unknown command",                     // 7
+    "Command was not validated first"      // 8
 };
 
 /// Struct Variables ///
@@ -80,7 +79,7 @@ const String ErrorCodes[9] = {
 struct command {
   String type;
   // If MAXPARAMS is changed this needs to be as well
-  int params[MAXPARAMS] = {-420, -420, -420, -420}; 
+  int params[MAXPARAMS] = { -420, -420, -420, -420 };
   uint8_t paramCount;
   uint8_t validity;
   bool validated = false;
@@ -88,16 +87,21 @@ struct command {
 /// End Struct Variables ///
 
 /// Ultrasonic Sensor Variables ///
-#include <HCSR04.h>
+#include <NewPing.h>
 #define ULTRASONIC_SENSOR_COUNT 4 - 1 // subtract one because index starts at 0
-HCSR04Sensor distanceSensor[ULTRASONIC_SENSOR_COUNT + 1]; // Array of all our Ultrasonic Sensors
+#define MAX_DISTANCE 200
+NewPing distanceSensor[ULTRASONIC_SENSOR_COUNT + 1] = {
+    NewPing(7, 8, MAX_DISTANCE),
+    NewPing(10, 9, MAX_DISTANCE),
+    NewPing(12, 11, MAX_DISTANCE),
+    NewPing(14, 13, MAX_DISTANCE) }; // Array of all our Ultrasonic Sensors
 /// End Ultrasonic Sensor Variables ///
 
 /// PWM Controller Variables ///
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(); // called this way, it uses the default address 0x40
-uint16_t dutyCyleArray[16] = {0}; // To keep track of duty cycle per channel
+uint16_t dutyCyleArray[16] = { 0 };                        // To keep track of duty cycle per channel
 /// End PWM Controller Variables ///
 
 /// Commands ///
@@ -107,26 +111,22 @@ uint16_t dutyCyleArray[16] = {0}; // To keep track of duty cycle per channel
  * @param sensorNum The ultrasonic sensor number to get distance for
  * @return Distance in cm of given sensor
  */
-String dist(uint8_t sensorNum){
+String dist(uint8_t sensorNum) {
   // check if number is bigger than the bumber of Ultrasonic Sensors that we use - 1
   if (sensorNum > ULTRASONIC_SENSOR_COUNT) {
     return "-1";
   }
 
-  double *dist_cm;
-
-  dist_cm = distanceSensor[sensorNum].measureDistanceCm();
-
-  return String(dist_cm[0]);
+  return (String)distanceSensor[sensorNum].ping_cm();
 }
 
 /**
  * @brief Set pwm frequency across all channels
- * 
+ *
  * @param hz Frequency
  * @return Result string
  */
-String pwmFunc(uint16_t hz){
+String pwmFunc(uint16_t hz) {
   // check if freq is to low
   if (hz < 40) {
     return String("1,0");
@@ -150,7 +150,7 @@ String pwmFunc(uint16_t hz){
  * @param dutyCyle Duty cycle to be set
  * @return Result string
  */
-String pwmDuty(uint8_t channel, uint16_t dutyCyle){
+String pwmDuty(uint8_t channel, uint16_t dutyCyle) {
   // check to see if its a valid channel
   if (channel > 15) {
     return String("1,0");
@@ -178,7 +178,7 @@ String pwmDuty(uint8_t channel, uint16_t dutyCyle){
  * @param channel PWM channel to get pwm value for
  * @return Result string
  */
-String pwmGetVal(uint8_t channel){
+String pwmGetVal(uint8_t channel) {
   // check to see if its a valid channel
   if (channel > 15) {
     return String("1,0");
@@ -191,7 +191,7 @@ String pwmGetVal(uint8_t channel){
 /**
  * @brief Loop that only runs once, used to set up Serial
  */
-void setup(){
+void setup() {
   /// Serial ///
   DEBUGSERIAL.begin(9600);
   COMMSERIAL.begin(9600);
@@ -205,7 +205,7 @@ void setup(){
   /// End PWM ///
 
   /// Distance Sensors ///
-  distanceSensor[0].begin(7, 8); // TODO: add sensors 1 to 3
+
   /// End Distance Sensors ///
 }
 
@@ -216,7 +216,7 @@ void setup(){
  * @param inputString New line terminating string read in from the jetson
  * @return command Struct that contains the command and parameters that were parsed, along with basic validity checks
  */
-command parse(String inputString){
+command parse(String inputString) {
   command toReturn;
   toReturn.paramCount = 0;
   toReturn.validity = PARSING_ERROR;
@@ -274,7 +274,7 @@ command parse(String inputString){
  * @return true Command is valid (`ErrorCodes[cmd.validity]` is either 0 or 1)
  * @return false Command is invalid, use `ErrorCodes[cmd.validity]` to see the error
  */
-bool validate(command &cmd){
+bool validate(command& cmd) {
   if (cmd.type.equals("pwmFunc")) {
     // Needs 1 param
     if (cmd.paramCount != 1) {
@@ -348,7 +348,7 @@ bool validate(command &cmd){
  * @param cmd Command to be checked for validity
  * @return true if valid (cmd.validity == 0 || 1), false if invalid
  */
-bool valid(command cmd){
+bool valid(command cmd) {
   if (cmd.validity == NO_PARAMS || cmd.validity == VALID) {
     return true;
   } else {
@@ -363,7 +363,7 @@ bool valid(command cmd){
  * @param cmd Command to send. Needs to be prevalidated using validate() function
  * @return String Whatever `cmd.type` function returns
  */
-String sendCommand(command cmd){
+String sendCommand(command cmd) {
   if (cmd.validated == false) {
     cmd.validity = COMMAND_NOT_VALIDATED;
     return ErrorCodes[cmd.validity];
@@ -374,22 +374,19 @@ String sendCommand(command cmd){
     uint16_t p1 = (uint16_t)cmd.params[1];
     // Send command
     return pwmFunc(p1);
-  }
-  else if (cmd.type.equals("pwmDuty")) {
+  } else if (cmd.type.equals("pwmDuty")) {
     // Convert param 1 to uint8_t
     uint8_t p1 = (uint8_t)cmd.params[0];
     // Convert param 2 to uint16_t
     uint16_t p2 = (uint16_t)cmd.params[1];
     // Send command
     return pwmDuty(p1, p2);
-  }
-  else if (cmd.type.equals("pwmGetVal")) {
+  } else if (cmd.type.equals("pwmGetVal")) {
     // Convert param 1 to uint8_t
     uint8_t p1 = (uint8_t)cmd.params[0];
     // Send command
     return pwmGetVal(p1);
-  }
-  else if (cmd.type.equals("dist")) {
+  } else if (cmd.type.equals("dist")) {
     // Convert param 1 to uint8_t
     uint8_t p1 = (uint8_t)cmd.params[0];
     // Send command
@@ -402,12 +399,12 @@ String sendCommand(command cmd){
 /**
  * @brief Main loop that repeats, put code here to run continuously
  */
-void loop(){
+void loop() {
   // Ask for command
-  if (!promptSent)  {
-    COMMSERIAL.println("Enter a command:");
-    promptSent = true;
-  }
+  // if (!promptSent) {
+  //   COMMSERIAL.println("Enter a command:");
+  //   promptSent = true;
+  // }
 
   if (COMMSERIAL.available() > 0) {
     // Read in line until selected character
@@ -417,19 +414,18 @@ void loop(){
     command currentCommand = parse(inputString);
     if (!valid(currentCommand)) {
       COMMSERIAL.println(ErrorCodes[currentCommand.validity]);
-      promptSent = false;
+      // promptSent = false;
       return;
     }
 
     if (!validate(currentCommand)) {
       COMMSERIAL.println(ErrorCodes[currentCommand.validity]);
-      promptSent = false;
+      // promptSent = false;
       return;
     }
 
     COMMSERIAL.println(sendCommand(currentCommand));
-    promptSent = false;
+    // promptSent = false;
     return;
   }
 }
-  
