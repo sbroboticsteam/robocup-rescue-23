@@ -1,7 +1,7 @@
 /*
 This is the code that will receive a command from the jetson using UART (Serial1 in this case), take in that string and
 then parse it into a command. This command will then be put into a struct (aptly named command), which holds the type of
-command (a string, example "pwmFunc") the array of parameters (ints), an int to represent the number of parameters, and
+command (a string, example "SFR") the array of parameters (ints), an int to represent the number of parameters, and
 an int to represent the validity of the command (used to issue feedback/debugging for the software team)
 
 To add new commands:
@@ -17,19 +17,14 @@ Step 3:
 */
 
 // Libraries Used:
-/// https://github.com/d03n3rfr1tz3/HC-SR04
+/// https://www.arduino.cc/reference/en/language/functions/communication/wire/ - Arduino library (Wire.h)
 /// https://github.com/adafruit/Adafruit_Sensor - not sure?
-/// https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library
+/// https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library - Used for pwm splitter (Adafruit_PWMServoDriver.h)
+/// https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home - Used for HC-SR04 Sensor (NewPing.h) 
+
 
 /*
 Instructions for installing library:
-
-NOTE:
-
-HC-SR04 can be installed with the Arduino IDE 2.0 Libary manager by searching for:
-
-"HC_SR04" by bjoernboeckle
-"Adafruit-PWM-Servo-Driver-Library"
 
 Step 1:
   Go to github and download the entire repo as a .zip file
@@ -41,14 +36,8 @@ Step 4:
   Profit ?
 */
 
-// https://forum.arduino.cc/t/newping-library-hc-sr04-srf05-srf06-dyp-me007-parallax-ping-v1-7/103737 we gotta look into THIS!
-
-// https://github.com/gamegine/HCSR04-ultrasonic-sensor-lib might also be good
-
 #define DEBUGSERIAL Serial
 #define COMMSERIAL Serial // Change this back to `Serial1` if using Arduino Mega
-
-// bool promptSent = false;
 
 #define NO_PARAMS 0
 #define VALID 1
@@ -111,7 +100,7 @@ uint16_t dutyCyleArray[16] = { 0 };                        // To keep track of d
  * @param sensorNum The ultrasonic sensor number to get distance for
  * @return Distance in cm of given sensor
  */
-String dist(uint8_t sensorNum) {
+String DIS(uint8_t sensorNum) {
   // check if number is bigger than the bumber of Ultrasonic Sensors that we use - 1
   if (sensorNum > ULTRASONIC_SENSOR_COUNT) {
     return "-1";
@@ -126,7 +115,7 @@ String dist(uint8_t sensorNum) {
  * @param hz Frequency
  * @return Result string
  */
-String pwmFunc(uint16_t hz) {
+String SFR(uint16_t hz) {
   // check if freq is to low
   if (hz < 40) {
     return String("1,0");
@@ -150,7 +139,7 @@ String pwmFunc(uint16_t hz) {
  * @param dutyCyle Duty cycle to be set
  * @return Result string
  */
-String pwmDuty(uint8_t channel, uint16_t dutyCyle) {
+String SDT(uint8_t channel, uint16_t dutyCyle) {
   // check to see if its a valid channel
   if (channel > 15) {
     return String("1,0");
@@ -173,12 +162,12 @@ String pwmDuty(uint8_t channel, uint16_t dutyCyle) {
 }
 
 /**
- * @brief Get PWM frequency for specific channel
+ * @brief Get duty cycle for specific channel
  *
- * @param channel PWM channel to get pwm value for
+ * @param channel PWM channel to get duty cycle for
  * @return Result string
  */
-String pwmGetVal(uint8_t channel) {
+String GDT(uint8_t channel) {
   // check to see if its a valid channel
   if (channel > 15) {
     return String("1,0");
@@ -213,7 +202,7 @@ void setup() {
  * @brief Parses a string into a command struct
  *
  * @param inputString New line terminating string read in from the jetson
- * @return command Struct that contains the command and parameters that were parsed, along with basic validity checks
+ * @return command struct that contains the command and parameters that were parsed, along with basic validity checks
  */
 command parse(String inputString) {
   command toReturn;
@@ -274,7 +263,7 @@ command parse(String inputString) {
  * @return false Command is invalid, use `ErrorCodes[cmd.validity]` to see the error
  */
 bool validate(command& cmd) {
-  if (cmd.type.equals("pwmFunc")) {
+  if (cmd.type.equals("SFR")) {
     // Needs 1 param
     if (cmd.paramCount != 1) {
       cmd.validity = WRONG_NUM_PARAM;
@@ -288,7 +277,7 @@ bool validate(command& cmd) {
     // No issues found, must be valid
     cmd.validated = true;
     return true;
-  } else if (cmd.type.equals("pwmDuty")) {
+  } else if (cmd.type.equals("SDT")) {
     // Needs 2 params
     if (cmd.paramCount != 2) {
       cmd.validity = WRONG_NUM_PARAM;
@@ -307,7 +296,7 @@ bool validate(command& cmd) {
     // No issues found, must be valid
     cmd.validated = true;
     return true;
-  } else if (cmd.type.equals("pwmGetVal")) {
+  } else if (cmd.type.equals("GDT")) {
     // Needs 1 param
     if (cmd.paramCount != 1) {
       cmd.validity = WRONG_NUM_PARAM;
@@ -321,7 +310,7 @@ bool validate(command& cmd) {
     // No issues found, must be valid
     cmd.validated = true;
     return true;
-  } else if (cmd.type.equals("dist")) {
+  } else if (cmd.type.equals("DIS")) {
     // Needs 1 param
     if (cmd.paramCount != 1) {
       cmd.validity = WRONG_NUM_PARAM;
@@ -368,28 +357,28 @@ String sendCommand(command cmd) {
     return ErrorCodes[cmd.validity];
   }
 
-  if (cmd.type.equals("pwmFunc")) {
+  if (cmd.type.equals("SFR")) {
     // Convert param 1 to uint16_t
     uint16_t p1 = (uint16_t)cmd.params[1];
     // Send command
-    return pwmFunc(p1);
-  } else if (cmd.type.equals("pwmDuty")) {
+    return SFR(p1);
+  } else if (cmd.type.equals("SDT")) {
     // Convert param 1 to uint8_t
     uint8_t p1 = (uint8_t)cmd.params[0];
     // Convert param 2 to uint16_t
     uint16_t p2 = (uint16_t)cmd.params[1];
     // Send command
-    return pwmDuty(p1, p2);
-  } else if (cmd.type.equals("pwmGetVal")) {
+    return SDT(p1, p2);
+  } else if (cmd.type.equals("GDT")) {
     // Convert param 1 to uint8_t
     uint8_t p1 = (uint8_t)cmd.params[0];
     // Send command
-    return pwmGetVal(p1);
-  } else if (cmd.type.equals("dist")) {
+    return GDT(p1);
+  } else if (cmd.type.equals("DIS")) {
     // Convert param 1 to uint8_t
     uint8_t p1 = (uint8_t)cmd.params[0];
     // Send command
-    return dist(p1);
+    return DIS(p1);
   }
 
   return "Command not found";
