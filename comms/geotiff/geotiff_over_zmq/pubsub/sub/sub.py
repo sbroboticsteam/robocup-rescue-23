@@ -24,7 +24,7 @@ progress = tqdm.tqdm(range(size), f"Receiving {fileName}", unit="B", unit_scale=
 
 with open(fileName, 'wb') as f:
     while True:
-        bytes_read = subscriber.recv(BUFFER_SIZE)
+        bytes_read = subscriber.recv_pyobj(BUFFER_SIZE)
         if not bytes_read:
             break
         else:

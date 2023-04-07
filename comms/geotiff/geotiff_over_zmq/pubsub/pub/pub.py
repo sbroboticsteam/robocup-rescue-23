@@ -29,7 +29,7 @@ with open(fileName, 'rb') as f:
         if not bytes_read:
             break
         else:
-            publisher.send(bytes_read)
+            publisher.send_pyobj(bytes_read)
             progress.update(len(bytes_read))
 publisher.close
 
