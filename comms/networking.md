@@ -6,7 +6,7 @@ We'll need to change some Windows firewall settings.
 1. Head to **Windows Security** and navigate to the **Firewall & network protection** menu.
 2. Click on **Advanced settings**.
 3. Select **Yes** on the UAC prompt that appears.
-4. In the left-hand menu, select **Outbound rules**.
+4. In the left-hand menu of the window that appears, select **Outbound rules**.
 5. Search for any instances of **File and Printer Sharing (Echo Request - ICMPv4 out) or (Echo Request - ICMPv6 out)** and enable them.
 6. Close the window.
 
