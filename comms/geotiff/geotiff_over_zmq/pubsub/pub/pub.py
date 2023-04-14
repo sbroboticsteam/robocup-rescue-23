@@ -5,7 +5,7 @@ import time
 import os
 
 separator = "<SEPARATOR>"
-BUFFER_SIZE = 4096
+BUFFER_SIZE = 8192
 serverAddress = "tcp://localhost:5555"
 fileName = "sample.tif"
 

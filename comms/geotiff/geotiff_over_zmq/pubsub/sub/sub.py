@@ -4,7 +4,7 @@ import tqdm
 import socket
 import os
 
-BUFFER_SIZE = 4096
+BUFFER_SIZE = 8192
 separator = "<SEPARATOR>"
 clientAddress = "tcp://*:5555"
 
