@@ -5,9 +5,9 @@ import time
 import os
 
 separator = "<SEPARATOR>"
-BUFFER_SIZE = 8192
+BUFFER_SIZE = 8192 # bytes
 serverAddress = "tcp://localhost:5555"
-fileName = "sample.tif"
+fileName = "sample.txt"
 
 print("GEOTIFF over ZMQ initializing...")
 context = zmq.Context()
