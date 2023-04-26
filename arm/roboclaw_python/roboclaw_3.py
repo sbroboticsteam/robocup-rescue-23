@@ -3,6 +3,8 @@ import serial
 import struct
 import time
 
+
+
 class Roboclaw:
 	'Roboclaw Interface Class'
 	
