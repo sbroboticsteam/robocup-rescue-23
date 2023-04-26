@@ -3,6 +3,8 @@ import serial
 import struct
 import time
 
+
+
 class Roboclaw:
 	'Roboclaw Interface Class'
 	
@@ -433,13 +435,9 @@ class Roboclaw:
 
 	def _writeS4(self,address,cmd,val):
 		trys=self._trystimeout
-		print("the number of trys is:", trys)
 		while trys:
 			self._sendcommand(address,cmd)
-
-			#changing from writing longs to writing bytes
-			self._writelong(val)
-			print("we wrote a value")
+			self._writeslong(val)
 			if self._writechecksum():
 				return True
 			trys=trys-1
@@ -784,7 +782,6 @@ class Roboclaw:
 		return self._writeS2S2(address,self.Cmd.MIXEDDUTY,m1,m2)
 
 	def SpeedM1(self,address,val):
-		#changed from S4 to write1
 		return self._writeS4(address,self.Cmd.M1SPEED,val)
 
 	def SpeedM2(self,address,val):

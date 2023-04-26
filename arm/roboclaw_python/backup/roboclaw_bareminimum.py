@@ -5,10 +5,4 @@ rc = Roboclaw("COM3",115200)
 #Linux comport name
 #rc = Roboclaw("/dev/ttyACM0",115200)
 
-
-
-print(rc.Open());
-
-print(str(rc));
-
-
+rc.Open()

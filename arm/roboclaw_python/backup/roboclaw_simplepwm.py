@@ -1,10 +1,8 @@
 import time
-from serial.tools.list_ports import comports
-from roboclaw_3 import Roboclaw
+from roboclaw import Roboclaw
 
 #Windows comport name
-port = comports()[0].name;
-rc = Roboclaw(port ,115200)
+rc = Roboclaw("COM11",115200)
 #Linux comport name
 #rc = Roboclaw("/dev/ttyACM0",115200)
 
