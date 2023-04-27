@@ -3,10 +3,12 @@
 #***The Min and Max Positions must be at least 0 and 50000
 
 import time
-from roboclaw import Roboclaw
+from roboclaw_3 import Roboclaw
+from serial.tools.list_ports import comports
 
 #Windows comport name
-rc = Roboclaw("COM3",115200)
+port = comports()[0].name;
+rc = Roboclaw(port ,115200)
 #Linux comport name
 #rc = Roboclaw("/dev/ttyACM0",115200)
 
@@ -18,32 +20,32 @@ def displayspeed():
 
 	print("Encoder1:"),
 	if(enc1[0]==1):
-		print enc1[1],
-		print format(enc1[2],'02x'),
+		print (enc1[1]),
+		print (format(enc1[2],'02x')),
 	else:
-		print "failed",
-	print "Encoder2:",
+		print ("failed"),
+	print( "Encoder2:"),
 	if(enc2[0]==1):
-		print enc2[1],
-		print format(enc2[2],'02x'),
+		print (enc2[1]),
+		print ( format(enc2[2],'02x')),
 	else:
-		print "failed " ,
-	print "Speed1:",
+		print ("failed ") ,
+	print ("Speed1:"),
 	if(speed1[0]):
-		print speed1[1],
+		print( speed1[1]),
 	else:
-		print "failed",
+		print ("failed"),
 	print("Speed2:"),
 	if(speed2[0]):
-		print speed2[1]
+		print (speed2[1])
 	else:
-		print "failed "
+		print ("failed ")
 
 rc.Open()
 address = 0x80
 
 while(1):
-	print "Pos 50000"
+	print ("Pos 50000")
 	rc.SpeedAccelDeccelPositionM1(address,32000,12000,32000,50000,0)
 	for i in range(0,80):
 		displayspeed()
@@ -51,10 +53,10 @@ while(1):
 
 	time.sleep(2)
 	
-	print "Pos 0"
+	print ("Pos 0")
 	rc.SpeedAccelDeccelPositionM1(address,32000,12000,32000,0,0)
 	for i in range(0,80):
 		displayspeed()
 		time.sleep(0.1)
   
-  	time.sleep(2)
+time.sleep(2)
