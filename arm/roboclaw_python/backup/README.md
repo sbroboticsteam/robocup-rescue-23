@@ -7,7 +7,13 @@
 - Look through roboclaw_python folder examples to see how to start communication and configure
   the contoller operation.
 
+## Progress Update
+- We are using BasicMicro Motion Studio (for 2x30A) to control the motors
+- One of the motors have broken wires and were labeled defective
+- `roboclaw_position.py` had incorrect encoder values when read from the defective motor
+
 ## Useful Links
 - https://www.basicmicro.com/RoboClaw-2x30A-Motor-Controller_p_9.html
 - https://resources.basicmicro.com/using-the-roboclaw-python-library/
 - https://resources.basicmicro.com/using-encoders-with-the-python-library/
+- https://www.basicmicro.com/downloads
