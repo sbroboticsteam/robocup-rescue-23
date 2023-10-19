@@ -21,6 +21,7 @@ Step 3:
 /// https://github.com/adafruit/Adafruit_Sensor - not sure?
 /// https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library - Used for pwm splitter (Adafruit_PWMServoDriver.h)
 /// https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home - Used for HC-SR04 Sensor (NewPing.h) 
+/// Adafruit BusIO (Needed for pwm library?????)
 
 
 /*
@@ -79,11 +80,12 @@ struct command {
 #include <NewPing.h>
 #define ULTRASONIC_SENSOR_COUNT 4 - 1 // subtract one because index starts at 0
 #define MAX_DISTANCE 200
+// NewPing(Trig Pin, Echo Pin, MAX_DISTANCE)
 NewPing distanceSensor[ULTRASONIC_SENSOR_COUNT + 1] = {
     NewPing(7, 8, MAX_DISTANCE),
     NewPing(10, 9, MAX_DISTANCE),
     NewPing(12, 11, MAX_DISTANCE),
-    NewPing(14, 13, MAX_DISTANCE) }; // Array of all our Ultrasonic Sensors
+    NewPing(4, 13, MAX_DISTANCE) }; // Array of all our Ultrasonic Sensors
 /// End Ultrasonic Sensor Variables ///
 
 /// PWM Controller Variables ///
