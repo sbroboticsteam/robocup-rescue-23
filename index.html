@@ -18,5 +18,35 @@
             style="font-weight: bold;">
         </ul>
     </p>
+    <script type="text/javascript" type="text/javascript">
+        const ros = new ROSLIB.Ros({
+            url: "ws://localhost:9090"
+        });
+
+        ros.on('connection', () => {
+            document.getElementById('status').innerHTML = "successful";
+        });
+
+        ros.on('error', (error) => {
+            document.getElementById('status').innerHTML = "errored out " + error;
+        });
+
+        ros.on('close', () => {
+            document.getElementById('status').innerHTML = "closed";
+        });
+
+        const topicListener = new ROSLIB.TOPIC({
+            ros,
+            name: '/my_topic/',
+            messageTYpe: 'std_msgs/String',
+        });
+
+        topicListener.subscribe((message) => {
+            const messageList = document.getElementById('messages');
+            const newMessage = document.createElement('li');
+            newMessage.appendCHild(document.createTextNode(message.data));
+            messageList.appendChild(newMessage);
+        });
+    </script>
 </body>
 </html>
