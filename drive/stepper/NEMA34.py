@@ -8,58 +8,179 @@ from serial.tools.list_ports import comports
 
 
 class NEMA34():
+    global COMMANDS
 
     COMMANDS = {
-        "POR": 27,
+        "POL": 0,
         "CPL": 1,
-        "RIS": 20,
-        "ADC": 150,
-        "AHD": 230,
-        "AHM": 219,
-        "BRT": 174,
-        "CER": 65,
-        "DIR": 184,
-        "DMD": 228,
-        "EMD": 227,
-        "ERL": 151,
-        "GCL": 142,
-        "GOC": 237,
-        "GOL": 143,
-        "KDD": 183,
-        "KED": 182,
-        "KMC": 167,
-        "KMX": 167,
-        "KMR": 181,
-        "LVP": 131,
-        "LVT": 212,
-        "MTT": 214,
-        "OVT": 213,
-        "PLR": 208,
-        "PRO": 185,
-        "SCF": 195,
-        "SIF": 186,
-        "SLC": 244,
-        "TQL": 149,
-        "VLL": 69,
         "HLT": 2,
-        "MAT": 196,
-        "MAV": 134,
-        "MRT": 177,
-        "MRV": 135,
-        "PMC": 240,
-        "PMO": 249,
-        "PMV": 241,
-        "PMX": 242,
-        "PVC": 93,
         "STP": 3,
-        "VMI": 15,
+        "RST": 4,
+        "RVN": 5,
+        "RPB": 6,
+        "CLP": 8,
+        "SDL": 9,
+        "RUN": 10,
+        "WRI": 11, 
         "RRG": 12,
-        "WRI": 11,
+        "SPR": 13,
+        "LPR": 14,
+        "VMI": 15, 
+        "RIS": 20,
+        "RIO": 21,
+        "IMW": 25,
+        "POR": 27,
+        "WRX": 30,
+        "CII": 31, 
+        "RRW": 32,
+        "PUP": 33,
+        "ADX": 64,
+        "CER": 65,
+        "ETP": 66, 
+        "ETN": 67, 
+        "FL2": 68,
+        "VLL": 69,
+        "CT2": 70,
+        "CBD": 71,
+        "CDL": 72, 
+        "CID": 73,
+        "CNL": 74, 
+        "T1F": 75,
+        "T2S": 76,
+        "T2K": 77,
+        "PLS": 78,
+        "PLT": 79,
+        "CDR": 80, 
+        "CNR": 81, 
+        "SMD": 86,
+        "JRB": 89,
+        "PCB": 89,
+        "SSI": 92,
+        "EGM": 93,
+        "PVC": 93,
+        "END": 128,
+        "PWO": 129,
+        "SEF": 130,
+        "LVP": 131,
+        "MAV": 134, 
+        "MRV": 135, 
+        "JGE": 137,
+        "JGR": 137,
+        "JLE": 137,
+        "JLT": 137,
+        "JNE": 137,
+        "JRE": 137,
+        "WCL": 138,
+        "WCW": 139,
+        "DLT": 140,
+        "DLY": 140,
+        "WDL": 141,
+        "GCL": 142,
+        "GOL": 143,
+        "ZTG": 144,
+        "ZTP": 145,
+        "TTP": 146,
+        "CME": 147,
+        "CTC": 148,
+        "TQL": 149,
+        "AHC": 150,
+        "ERL": 151,
+        "WRF": 154,
+        "WRP": 154, 
+        "IDT": 155,
+        "LRP": 156,
+        "CLX": 158,
+        "VMP": 159, 
+        "RAV": 160, 
+        "RRV": 161, 
+        "JMP": 162,
+        "JOI": 162,
         "CIS": 163,
         "CKS": 164,
-        "CME": 147,
-        "TTP": 146,
-        "ZTP": 145
+        "CLC": 165,
+        "CLM": 166,
+        "KMC": 167,
+        "MCT": 168,
+        "FLC": 169,
+        "EEM": 170,
+        "DDB": 171,
+        "DEM": 171,
+        "ADL": 173,
+        "BRT": 174,
+        "MAT": 176, 
+        "MRT": 177, 
+        "RAT": 178, 
+        "RRT": 179, 
+        "SSD": 180,
+        "KMR": 181,
+        "KED": 182,
+        "KDD": 183,
+        "DIR": 184,
+        "PRO": 185,
+        "SIF": 186,
+        "EDL": 187,
+        "CIO": 188,
+        "EMN": 192,
+        "SEE": 192,
+        "ARI": 193,
+        "WBS": 194,
+        "SCF": 195,
+        "RSM": 196,
+        "RLM": 197,
+        "RSN": 198,
+        "RLN": 199,
+        "CLD": 200,
+        "PCI": 201,
+        "PCL": 201,
+        "PRI": 202,
+        "PRT": 202,
+        "WBE": 204,
+        "SOB": 205,
+        "COB": 206,
+        "ACR": 207,
+        "PLR": 208,
+        "FOR": 209,
+        "NXT": 210,
+        "LVT": 212,
+        "OVT": 213,
+        "MTT": 214,
+        "CTW": 215,
+        "PIM": 216,
+        "VIM": 217,
+        "TIM": 218,
+        "AHM": 219,
+        "KMX": 220,
+        "SSL": 221,
+        "RSD": 223,
+        "EMT": 225,
+        "DMT": 226,
+        "EMD": 227,
+        "DMD": 228,
+        "HSM": 229,
+        "AHD": 230,
+        "PCM": 231,
+        "PCG": 232,
+        "XRV": 233, 
+        "XAV": 234, 
+        "XRT": 235, 
+        "XAT": 236, 
+        "GOC": 237,
+        "JNA": 238,
+        "JOR": 239,
+        "PMC": 240,
+        "PMV": 241,
+        "PMX": 242,
+        "DLC": 243,
+        "SLC": 244,
+        "PCP": 245,
+        "ATR": 248,
+        "PMO": 249,
+        "JAN": 250,
+        "EDH": 251,
+        "DIF": 252,
+        "IMS": 253,
+        "IMQ": 254,
+        "RSP": 255, 
     }
 
     def __init__(self, motor_port) -> None:
@@ -83,7 +204,7 @@ class NEMA34():
         self.serial.close()
 
     def POR(self):
-        CID = 27
+        CID = COMMANDS.get("POR")
         self.execute(CID)
 
     def CPL(self, address: int):
@@ -91,11 +212,11 @@ class NEMA34():
             logging.error(f"Address ({address}) is out of range")
             return
 
-        CID = 1
+        CID = COMMANDS.get("CPL")
         self.execute(CID, address)
 
     def RIS(self):
-        CID = 20
+        CID = COMMANDS.get("RIS")
         self.execute(CID)
 
     def AHC(self, openToClosed: int, closedToOpen: int):
@@ -106,7 +227,7 @@ class NEMA34():
             logging.error(f"Closed to open ${closedToOpen} is invalid")
             return
 
-        CID = 150
+        CID = COMMANDS.get("AHC")
         self.execute(CID, openToClosed, closedToOpen)
 
     def AHD(self, delayCount: int = 1250):
@@ -114,7 +235,7 @@ class NEMA34():
             logging.error(f"Delay count ({delayCount}) out of range")
             return
 
-        CID = 230
+        CID = COMMANDS.get("AHD")
         self.execute(CID, delayCount)
 
     def AHM(self, mode: int = 0):
@@ -122,7 +243,7 @@ class NEMA34():
             logging.error("Mode is invalid")
             return
 
-        CID = 219
+        CID = COMMANDS.get("AHM")
         self.execute(CID, mode)
 
     def BRT(self, speed: int = 576):
@@ -132,7 +253,7 @@ class NEMA34():
             logging.error(f"Baudrate ({speed}) is invalid")
             return
 
-        CID = 174
+        CID = COMMANDS.get("BRT")
         self.execute(CID, speed)
 
     def CER(self, process: int):
@@ -140,7 +261,7 @@ class NEMA34():
             logging.error("Process is invalid")
             return
 
-        CID = 65
+        CID = COMMANDS.get("CER")
         self.execute(CID, process)
 
     def DIR(self, mode: int = 0):
@@ -148,15 +269,15 @@ class NEMA34():
             logging.error("Mode is invalid")
             return
 
-        CID = 184
+        CID = COMMANDS.get("DIR")
         self.execute(CID, mode)
 
     def DMD(self):
-        CID = 228
+        CID = COMMANDS.get("DMD")
         self.execute(CID)
 
     def EMD(self):
-        CID = 227
+        CID = COMMANDS.get("EMD")
         self.execute(CID)
 
     def ERL(self, movingLimit: int = 0, holdingLimit: int = 0, delayToHolding: int = 100):
@@ -170,11 +291,11 @@ class NEMA34():
             logging.error(f"Delay to holding ({delayTotHolding}) out of range")
             return
 
-        CID = 151
+        CID = COMMANDS.get("ERL")
         self.execute(CID, movingLimit, holdingLimit, delayToHolding)
 
     def GCL(self):
-        CID = 142
+        CID = COMMANDS.get("GCL")
         self.execute(CID)
 
     def GOC(self, gravityOffset: int = 0):
@@ -182,19 +303,19 @@ class NEMA34():
             logging.error(f"Gravity offset ({gravityOffset}) out of range")
             return
 
-        CID = 237
+        CID = COMMANDS.get("GOC")
         self.execute(CID, gravityOffset)
 
     def GOL(self):
-        CID = 143
+        CID = COMMANDS.get("GOL")
         self.execute(CID)
 
     def KDD(self):
-        CID = 183
+        CID = COMMANDS.get("KDD")
         self.execute(CID)
 
     def KED(self):
-        CID = 182
+        CID = COMMANDS.get("KED")
         self.execute(CID)
 
     def KMC(self, conditionEnable: int, conditionState: int):
@@ -205,7 +326,7 @@ class NEMA34():
             logging.error(f"Condition state ({conditionState}) out of range")
             return
 
-        CID = 167
+        CID = COMMANDS.get("KMC")
         self.execute(CID, conditionEnable, conditionState)
 
     def KMX(self, condEnISW: int, condStISW: int, condEnIS2: int, condStIS2: int, condEnXIO: int, condStXIO: int):
@@ -228,7 +349,7 @@ class NEMA34():
             logging.error(f"Condition state XIO ({condStXIO}) out of range")
             return
 
-        CID = 167
+        CID = COMMANDS.get("KMX")
         self.execute(CID, condEnISW, condStISW, condEnIS2,
                      condStIS2, condEnXIO, condStXIO)
 
@@ -237,7 +358,7 @@ class NEMA34():
             logging.error("Process is invalid")
             return
 
-        CID = 181
+        CID = COMMANDS.get("KMR")
         self.execute(CID, process)
 
     def LVP(self, voltage: int = 0):
@@ -245,7 +366,7 @@ class NEMA34():
             logging.error(f"Voltage ({voltage}) is out of range")
             return
 
-        CID = 131
+        CID = COMMANDS.get("LVP")
         self.execute(CID, voltage)
 
     def LVT(self, voltage: int = 10):
@@ -253,7 +374,7 @@ class NEMA34():
             logging.error(f"Voltage ({voltage}) is out of range")
             return
 
-        CID = 212
+        CID = COMMANDS.get("LVT")
         self.execute(CID, voltage)
 
     def MTT(self, temperature: int = 0):
@@ -261,7 +382,7 @@ class NEMA34():
             logging.error(f"Temperature ({temperature}) is out of range")
             return
 
-        CID = 214
+        CID = COMMANDS.get("MTT")
         self.execute(CID, temperature)
 
     def OVT(self, voltage: int = 52):
@@ -269,7 +390,7 @@ class NEMA34():
             logging.error(f"Voltage ({voltage}) is out of range")
             return
 
-        CID = 213
+        CID = COMMANDS.get("OVT")
         self.execute(CID, voltage)
 
     def PLR(self, process: int):
@@ -277,7 +398,7 @@ class NEMA34():
             logging.error(f"Process ({process}) is out of range")
             return
 
-        CID = 208
+        CID = COMMANDS.get("PLR")
         self.execute(CID, process)
 
     def PRO(self, word: int):
@@ -285,7 +406,7 @@ class NEMA34():
             logging.error(f"Word is invalid")
             return
 
-        CID = 185
+        CID = COMMANDS.get("PRO")
         self.execute(CID, word)
 
     def SCF(self, factor: int = 0):
@@ -293,7 +414,7 @@ class NEMA34():
             logging.error(f"Factor ({factor}) is out of range")
             return
 
-        CID = 195
+        CID = COMMANDS.get("SCF")
         self.execute(CID, factor)
 
     def SIF(self, mode: int = 0):
@@ -301,11 +422,11 @@ class NEMA34():
             logging.error("Invalid mode")
             return
 
-        CID = 186
+        CID = COMMANDS.get("SIF")
         self.execute(CID, mode)
 
     def SLC(self):
-        CID = 244
+        CID = COMMANDS.get("SLC")
         self.execute(CID)
 
     def TQL(self, closedLoopHolding: int, closedLoopMoving: int, openLoopHolding: int, openLoopMoving: int):
@@ -325,7 +446,7 @@ class NEMA34():
             logging.error(f"Open loop moving ({openLoopMoving}) out of range")
             return
 
-        CID = 149
+        CID = COMMANDS.get("TQL")
         self.execute(CID, closedLoopHolding, closedLoopMoving,
                      openLoopHolding, openLoopMoving)
 
@@ -337,14 +458,14 @@ class NEMA34():
             logging.error(f"Holding Limit ({holdingLimit}) out of range")
             return
 
-        CID = 69
+        CID = COMMANDS.get("VLL")
         self.execute(CID, movingLimit, holdingLimit)
 
     def HLT(self):
-        CID = 2
+        CID = COMMANDS.get("HLT")
         self.execute(CID)
 
-    def MAT(self, position: int, accelerationTime: int, totalTime: int, stopEnable: int, stopState: int):
+    def MAT(self, position: int, accelerationTime: int, totalTime: int, stopEnable: int = 0, stopState: int = 0):
         if position < -2147483648 or position > 2147483647:
             logging.error(f"Postion ({position}) out of range")
             return
@@ -362,11 +483,11 @@ class NEMA34():
             logging.error(f"Stop state is invalid")
             return
 
-        CID = 196
+        CID = COMMANDS.get("MAT")
         self.execute(CID, position, accelerationTime,
                      totalTime, stopEnable, stopState)
 
-    def MAV(self, position: int, acceleration: int, totalTime: int, stopEnable: int, stopState: int):
+    def MAV(self, position: int, acceleration: int, totalTime: int, stopEnable: int = 0, stopState: int = 0):
         if position < -2147483648 or position > 2147483647:
             logging.error(f"Postion ({position}) out of range")
             return
@@ -383,11 +504,11 @@ class NEMA34():
             logging.error(f"Stop state is invalid")
             return
 
-        CID = 134
-        self.execute(CID, position, accelerationTime,
+        CID = COMMANDS.get("MAV")
+        self.execute(CID, position, acceleration,
                      totalTime, stopEnable, stopState)
 
-    def MRT(self, distance: int, rampTime: int, totalTime: int, stopEnable: int, stopState: int):
+    def MRT(self, distance: int, rampTime: int, totalTime: int, stopEnable: int = 0, stopState: int = 0):
         if distance < -2147483648 or distance > 2147483647:
             logging.error(f"Distance ({distance}) out of range")
             return
@@ -404,10 +525,10 @@ class NEMA34():
             logging.error(f"Stop state is invalid")
             return
 
-        CID = 177
+        CID = COMMANDS.get("MRT")
         self.execute(CID, distance, rampTime, totalTime, stopEnable, stopState)
 
-    def MRV(self, distance: int, acceleration: int, velocity: int, stopEnable: int, stopState: int):
+    def MRV(self, distance: int, acceleration: int, velocity: int, stopEnable: int = 0, stopState: int = 0):
         if distance < -2147483648 or distance > 2147483647:
             logging.error(f"Distance ({distance}) out of range")
             return
@@ -424,11 +545,11 @@ class NEMA34():
             logging.error(f"Stop state is invalid")
             return
 
-        CID = 135
+        CID = COMMANDS.get("MRV")
         self.execute(CID, distance, acceleration,
                      velocity, stopEnable, stopState)
 
-    def PMC(self, stopEnable: int, stopState: int):
+    def PMC(self, stopEnable: int = 0, stopState: int = 0):
         if stopEnable < 0 or stopEnable > 32767:
             logging.error(f"Stop enable invalid")
             return
@@ -436,10 +557,10 @@ class NEMA34():
             logging.error(f"Stop state is invalid")
             return
 
-        CID = 240
+        CID = COMMANDS.get("PMC")
         self.execute(CID, stopEnable, stopState)
 
-    def PMO(self, stopEnable: int, stopState: int):
+    def PMO(self, stopEnable: int = 0, stopState: int = 0):
         if stopEnable < 0 or stopEnable > 32767:
             logging.error(f"Stop enable invalid")
             return
@@ -447,7 +568,7 @@ class NEMA34():
             logging.error(f"Stop state is invalid")
             return
 
-        CID = 249
+        CID = COMMANDS.get("PMO")
         self.execute(CID, stopEnable, stopState)
 
     def PMV(self, stopEnable, stopState):
@@ -458,14 +579,14 @@ class NEMA34():
             logging.error(f"Stop state is invalid")
             return
 
-        CID = 241
+        CID = COMMANDS.get("PMV")
         self.execute(CID, stopEnable, stopState)
 
     def PMX(self):
-        CID = 242
+        CID = COMMANDS.get("PMX")
         self.execute(CID)
 
-    def PVC(self, startingDataRegister: int, stopEnable: int, stopState: int, mode: int = 0):
+    def PVC(self, startingDataRegister: int, stopEnable: int = 0, stopState: int = 0, mode: int = 0):
         if mode < -32678 or mode > 32767:
             logging.error(f"Mode is invalid")
             return
@@ -480,7 +601,7 @@ class NEMA34():
             logging.error(f"Stop state is invalid")
             return
 
-        CID = 93
+        CID = COMMANDS.get("PVC")
         self.execute(CID, mode, startingDataRegister, stopEnable, stopState)
 
     def STP(self, deceleration: int):
@@ -488,10 +609,10 @@ class NEMA34():
             logging.error(f"Deceleration ({deceleration}) out of range")
             return
 
-        CID = 3
+        CID = COMMANDS.get("STP")
         self.execute(CID, deceleration)
 
-    def VMI(self, acceleration: int, velocity: int, stopEnable: int, stopState: int):
+    def VMI(self, acceleration: int, velocity: int, stopEnable: int = 0, stopState: int = 0):
         if acceleration < -1073741823 or acceleration > 1073741823 or acceleration == 0:
             logging.error(f"Acceleration ${acceleration} is invalid")
             return
@@ -505,7 +626,7 @@ class NEMA34():
             logging.error(f"Stop state is invalid")
             return
 
-        CID = 15
+        CID = COMMANDS.get("VMI")
         self.execute(CID, acceleration, velocity, stopEnable, stopState)
 
     # TODO fix standard register range and optional commands
@@ -522,7 +643,7 @@ class NEMA34():
                     return
 
         # This is confusing, would this work??
-        CID = 12
+        CID = COMMANDS.get("RRG")
         if dataRegister2 == -1:
             self.execute(CID, dataRegister)
         if dataRegister3 == -1:
@@ -541,11 +662,11 @@ class NEMA34():
             logging.error(f"Data is invalid ${data}")
             return
 
-        CID = 11
+        CID = COMMANDS.get("WRI")
         self.execute(CID, dataRegister, data)
 
     def CIS(self):
-        CID = 163
+        CID = COMMANDS.get("CIS")
         self.execute(CID)
 
     def CKS(self, conditionEnable: int, conditionState: int):
@@ -556,27 +677,31 @@ class NEMA34():
             logging.error(f"Condition state ({conditionState}) out of range")
             return
 
-        CID = 164
+        CID = COMMANDS.get("CKS")
         self.execute(CID, conditionEnable, conditionState)
 
     def CME(self):
-        CID = 147
+        CID = COMMANDS.get("CME")
         self.execute(CID)
 
     def TTP(self):
-        CID = 146
+        CID = COMMANDS.get("TTP")
         self.execute(CID)
 
     def ZTP(self):
-        CID = 145
+        CID = COMMANDS.get("ZTP")
         self.execute(CID)
 
+    def CUSTOM(self, CommandID, *args):
+        self.execute(CommandID, *args)
+
     def execute(self, *args):
-        self.serial.write(self.encode(args))
+        self.serial.write(self.encode(*args))
         logging.info(self.read())
 
     def encode(self, *args) -> bytes:
-        ascii_string = f"@{self.id} {' '.join(map(str, args[:-1]))} \r"
+        ascii_string = f"@{self.id} {' '.join(map(str, args))} \r"
+        logging.info(f"@{self.id} {' '.join(map(str, args))} \r")
         return ascii_string.encode()
 
     def read(self):
