@@ -16,14 +16,9 @@ def main():
 
     # Commands
 
-    # Initialization commands
-    # motor1.BRT()
-    # motor1.CLM() # not implemented
-    # motor1.EMD()
-
-    # Control commands
-
-    motor1.MRT(4000, 833, 8333)
+    motor1.CUSTOM(225)
+    motor1.MRT(16000, 833, 8333)
+    motor1.MRT(16000, 833, 8333)
 
 
 if __name__ == "__main__":
