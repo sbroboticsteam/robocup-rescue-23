@@ -7,7 +7,7 @@ import time
 
 def main():
     # Port found using device manager
-    port = "COM12"
+    port = "COM26"
     portToUse = comports()[-1].name
 
     # Initialize motor object
@@ -16,11 +16,14 @@ def main():
 
     # Commands
 
-    print("Sending MRT")
-    motor1.MRT(4000, 833, 8333, 0, 0)
+    # Initialization commands
+    # motor1.BRT()
+    # motor1.CLM() # not implemented
+    # motor1.EMD()
 
-    print("motor1.read() output:\n")
-    print(motor1.read())
+    # Control commands
+
+    motor1.MRT(4000, 833, 8333)
 
 
 if __name__ == "__main__":
