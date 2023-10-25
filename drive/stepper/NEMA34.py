@@ -21,37 +21,37 @@ class NEMA34():
         "CLP": 8,
         "SDL": 9,
         "RUN": 10,
-        "WRI": 11, 
+        "WRI": 11,
         "RRG": 12,
         "SPR": 13,
         "LPR": 14,
-        "VMI": 15, 
+        "VMI": 15,
         "RIS": 20,
         "RIO": 21,
         "IMW": 25,
         "POR": 27,
         "WRX": 30,
-        "CII": 31, 
+        "CII": 31,
         "RRW": 32,
         "PUP": 33,
         "ADX": 64,
         "CER": 65,
-        "ETP": 66, 
-        "ETN": 67, 
+        "ETP": 66,
+        "ETN": 67,
         "FL2": 68,
         "VLL": 69,
         "CT2": 70,
         "CBD": 71,
-        "CDL": 72, 
+        "CDL": 72,
         "CID": 73,
-        "CNL": 74, 
+        "CNL": 74,
         "T1F": 75,
         "T2S": 76,
         "T2K": 77,
         "PLS": 78,
         "PLT": 79,
-        "CDR": 80, 
-        "CNR": 81, 
+        "CDR": 80,
+        "CNR": 81,
         "SMD": 86,
         "JRB": 89,
         "PCB": 89,
@@ -62,8 +62,8 @@ class NEMA34():
         "PWO": 129,
         "SEF": 130,
         "LVP": 131,
-        "MAV": 134, 
-        "MRV": 135, 
+        "MAV": 134,
+        "MRV": 135,
         "JGE": 137,
         "JGR": 137,
         "JLE": 137,
@@ -86,13 +86,13 @@ class NEMA34():
         "AHC": 150,
         "ERL": 151,
         "WRF": 154,
-        "WRP": 154, 
+        "WRP": 154,
         "IDT": 155,
         "LRP": 156,
         "CLX": 158,
-        "VMP": 159, 
-        "RAV": 160, 
-        "RRV": 161, 
+        "VMP": 159,
+        "RAV": 160,
+        "RRV": 161,
         "JMP": 162,
         "JOI": 162,
         "CIS": 163,
@@ -107,10 +107,10 @@ class NEMA34():
         "DEM": 171,
         "ADL": 173,
         "BRT": 174,
-        "MAT": 176, 
-        "MRT": 177, 
-        "RAT": 178, 
-        "RRT": 179, 
+        "MAT": 176,
+        "MRT": 177,
+        "RAT": 178,
+        "RRT": 179,
         "SSD": 180,
         "KMR": 181,
         "KED": 182,
@@ -160,10 +160,10 @@ class NEMA34():
         "AHD": 230,
         "PCM": 231,
         "PCG": 232,
-        "XRV": 233, 
-        "XAV": 234, 
-        "XRT": 235, 
-        "XAT": 236, 
+        "XRV": 233,
+        "XAV": 234,
+        "XRT": 235,
+        "XAT": 236,
         "GOC": 237,
         "JNA": 238,
         "JOR": 239,
@@ -180,7 +180,7 @@ class NEMA34():
         "DIF": 252,
         "IMS": 253,
         "IMQ": 254,
-        "RSP": 255, 
+        "RSP": 255,
     }
 
     def __init__(self, motor_port) -> None:
@@ -701,8 +701,47 @@ class NEMA34():
 
     def encode(self, *args) -> bytes:
         ascii_string = f"@{self.id} {' '.join(map(str, args))} \r"
-        logging.info(f"@{self.id} {' '.join(map(str, args))} \r")
+        logging.info(f"-->@{self.id} {' '.join(map(str, args))} \r")
         return ascii_string.encode()
 
     def read(self):
-        return self.serial.read_until(expected='\r'.encode())
+        response = self.serial.read_until(expected='\r'.encode())
+        response_string = str(response, encoding='utf-8')
+        response_data: str = response_string.split(" ")
+        response_type: str = response_data[0]
+        response_args = response_data[1:]
+
+        for i in range(0, len(response_args)):
+            response_args[i] = int(response_args[i], 16)
+
+        if (response_type == "*"):
+            # ACK
+            respondingID = response_args[0]
+            return (f"<--@{respondingID} ACK")
+        elif (response_type == "!"):
+            # NAK
+            respondingID = response_args[0]
+            commandBeingRespondedTo = response_args[1]
+            NAKCode = response_args[2]
+            codes = {
+                1: "Bad Command",
+                2: "Device Busy",
+                3: "Reserved",
+                4: "Reserved",
+                5: "Bad Format",
+                6: "Buffer Full ",
+                7: "Bad Address",
+                8: "Bad Response Packet Request",
+                9: "Bad PUP Lockout Code",
+                10: "Bad Checksum"
+            }
+            return (f"<--@{respondingID} NAK {codes.get(NAKCode)}")
+        else:  # TODO - what is the starting character of a data response
+            # Data response
+            # respondingID = response_args[0]
+            # commandBeingRespondedTo = response_args[1]
+            # data = response_args[2:]
+            # return (f"<-@{respondingID} Data response {data}")
+            print(f"-----{response}")
+            return (f"<-- Data response")
+        # return response
