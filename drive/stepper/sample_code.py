@@ -18,20 +18,20 @@ def main():
 
     # motor1.CIS()
     # motor1.CUSTOM(4)
-    motor1.CUSTOM(225)
-    motor1.MRT(16000, 833, 8333)
-    motor1.MRT(-16000, 833, 8333)
-    motor1.MRT(16000, 833, 8333)
-    # motor1.MRT(-16000, 833, 8333)
+    # motor1.CUSTOM(225)
     # motor1.MRT(16000, 833, 8333)
     # motor1.MRT(-16000, 833, 8333)
-    # motor1.MRT(16000, 833, 8333)
-    # motor1.MRT(-16000, 833, 8333)
+    # time.sleep(5)
 
-    # motor1.CUSTOM(0)  # pol
-    # motor1.CUSTOM(1, 65535)  # cpl
-    # motor1.CUSTOM(0)  # pol
-    # motor1.CUSTOM(1, 65535)  # cpl
+    motor1.CUSTOM(11, 21, 300)  # Set register 21 to 300 (acceleration)
+    motor1.CUSTOM(12, 21)
+    motor1.CUSTOM(11, 22, 800)  # Set register 22 to 800 (velocity)
+    motor1.CUSTOM(12, 22)
+
+    time.sleep(1)
+
+    # Turn on velocity move using registers 21 and 22
+    motor1.CUSTOM(93, 1, 21, 0, 0)
 
     # entering commands though the terminal
     # while True:

@@ -735,13 +735,15 @@ class NEMA34():
                 9: "Bad PUP Lockout Code",
                 10: "Bad Checksum"
             }
-            return (f"<--@{respondingID} NAK {codes.get(NAKCode)}")
-        else:  # TODO - what is the starting character of a data response
-            # Data response
-            # respondingID = response_args[0]
-            # commandBeingRespondedTo = response_args[1]
-            # data = response_args[2:]
-            # return (f"<-@{respondingID} Data response {data}")
+            return (f"<--@{respondingID} {commandBeingRespondedTo} NAK {codes.get(NAKCode)}")
+        elif (response_type == "#"):
+            # Data
+            respondingID = response_args[0]
+            commandBeingRespondedTo = response_args[1]
+            data = response_args[2:]
+            return (f"<--@{respondingID} Data {data}")
+        else:
+            # unknown response type
             print(f"-----{response}")
-            return (f"<-- Data response")
+            return (f"<-- Unknown response type")
         # return response
