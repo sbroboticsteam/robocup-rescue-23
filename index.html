@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ROSBridge Websocket Test</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.js"></script>
 </head>
 <body>
     <h1>Rosbridge demo</h1>
@@ -12,7 +13,7 @@
         <li>Start rosbridge server by entering <code>ros2 launch rosbridge_server rosbridge_websocket_launch.xml</code> inside terminal</li>
         <li>Server should run at port 9090 by default</li>
         <li>Push messages to webpage by opening new terminal and entering messages in the format: 
-            <code>ros2 topic pub /my_topic std_msgs/String "data: 'Hello world!' -1</code></li>
+            <code>ros2 topic pub -1 /my_topic std_msgs/String "data: 'Hello World'"</code></li>
     </ul>
     <p>Connection status: 
         <span id="status"
@@ -25,7 +26,16 @@
             style="font-weight: bold;">
         </ul>
     </p>
-    <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+    <p>Controller data received:
+        <span id="controller-data">
+            N/A
+        </span>
+    </p>
+
+    <p>Image data received:
+        
+    </p>
     <script type="text/javascript" type="text/javascript">
         const ros = new ROSLIB.Ros({
             url: "ws://localhost:9090"
@@ -43,9 +53,9 @@
             document.getElementById('status').innerHTML = "closed";
         });
 
-        const topicListener = new ROSLIB.TOPIC({
+        const topicListener = new ROSLIB.Topic({
             ros,
-            name: '/my_topic/',
+            name: 'my_topic',
             messageType: 'std_msgs/String',
         });
 
