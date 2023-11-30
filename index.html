@@ -4,13 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ROSBridge Websocket Test</title>
-    <script src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
 </head>
 <body>
     <h1>Rosbridge demo</h1>
-    <p>Connection: 
+    <h2>How to connect:</h2>
+    <ul>
+        <li>Start rosbridge server by entering <code>ros2 launch rosbridge_server rosbridge_websocket_launch.xml</code> inside terminal</li>
+        <li>Server should run at port 9090 by default</li>
+        <li>Push messages to webpage by opening new terminal and entering messages in the format: 
+            <code>ros2 topic pub /my_topic std_msgs/String "data: 'Hello world!' -1</code></li>
+    </ul>
+    <p>Connection status: 
         <span id="status"
             style="font-weight: bold;">
+            N/A
         </span>
     </p>
     <p><code>/my_topic/</code> messages received:
@@ -18,6 +25,7 @@
             style="font-weight: bold;">
         </ul>
     </p>
+    <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
     <script type="text/javascript" type="text/javascript">
         const ros = new ROSLIB.Ros({
             url: "ws://localhost:9090"
@@ -38,13 +46,13 @@
         const topicListener = new ROSLIB.TOPIC({
             ros,
             name: '/my_topic/',
-            messageTYpe: 'std_msgs/String',
+            messageType: 'std_msgs/String',
         });
 
-        topicListener.subscribe((message) => {
+        topicListener.subscribe((msg) => {
             const messageList = document.getElementById('messages');
             const newMessage = document.createElement('li');
-            newMessage.appendCHild(document.createTextNode(message.data));
+            newMessage.appendChild(document.createTextNode(msg.data));
             messageList.appendChild(newMessage);
         });
     </script>
