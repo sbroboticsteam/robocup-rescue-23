@@ -12,8 +12,17 @@
     <ul>
         <li>Start rosbridge server by entering <code>ros2 launch rosbridge_server rosbridge_websocket_launch.xml</code> inside terminal</li>
         <li>Server should run at port 9090 by default</li>
-        <li>Push messages to webpage by opening new terminal and entering messages in the format: 
-            <code>ros2 topic pub -1 /my_topic std_msgs/String "data: 'Hello World'"</code></li>
+        <p style="font-weight: bold;">To publish string messages:</p>
+        <ul>
+            <li>Push messages to webpage by opening new terminal and entering messages in the format: 
+                <code>ros2 topic pub -1 /my_topic std_msgs/String "data: 'Hello World'"</code></li>
+        </ul>
+
+        <p style="font-weight: bold;">To publish controller data:</p>
+        <ul>
+            <li>Start a joy node by entering <code>ros2 run joy joy_node</code> inside terminal</li>
+        </ul>
+        
     </ul>
     <p>Connection status: 
         <span id="status"
@@ -32,6 +41,8 @@
             N/A
         </span>
     </p>
+
+    <canvas id="simulation-canvas" width="400" height="400"></canvas>
 
     <p>Image data received:
         <img id="received-image" src="#">
@@ -77,7 +88,42 @@
             console.log("Joystick data: " + msg);
             const controllerElement = document.getElementById('controller-data');
             controllerElement.innerText = "Input received: " + msg;
+            const forwardBackward = msg.axes[1];
+            const rotation = msg.axes[2];
+
+            updateTurtle(forwardBackward, rotation);
         })
+
+        const canvas = document.getElementById('simulation-canvas');
+        const ctx = canvas.getContext('2d');
+        let turtle = {
+            x: 200, 
+            y: 200, 
+            angle: 0
+        };
+
+        function drawTurtle() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(turtle.x, turtle.y);
+            ctx.rotate(turtle.angle);
+            ctx.fillStyle = 'green';
+            ctx.beginPath();
+            ctx.arc(0, 0, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function updateTurtle(forwardBackward, rotation) {
+            const speed = 2;
+            const turnSpeed = 0.05;
+
+            turtle.angle += rotation * turnSpeed;
+            turtle.x += Math.cos(turtle.angle) * forwardBackward * speed;
+            turtle.y += Math.sin(turtle.angle) * forwardBackward * speed;
+
+            drawTurtle();
+        }
 
         const imageTopic = new ROSLIB.Topic({
             ros,
@@ -89,6 +135,8 @@
             const imgElement = document.getElementById('received-image');
             imgElement.src = 'data:image/jpeg;base64,' + msg.data;
         })
+
+        drawTurtle();
     </script>
 </body>
 </html>
