@@ -34,8 +34,9 @@
     </p>
 
     <p>Image data received:
-        
+        <img id="received-image" src="#">
     </p>
+
     <script type="text/javascript" type="text/javascript">
         const ros = new ROSLIB.Ros({
             url: "ws://localhost:9090"
@@ -65,6 +66,29 @@
             newMessage.appendChild(document.createTextNode(msg.data));
             messageList.appendChild(newMessage);
         });
+
+        const joyTopic = new ROSLIB.Topic({
+            ros,
+            name: 'joy',
+            messageType: 'sensor_msgs/msgs/Joy'
+        });
+
+        joyTopic.subscribe((msg) => {
+            console.log("Joystick data: " + msg);
+            const controllerElement = document.getElementById('controller-data');
+            controllerElement.innerText = "Input received: " + msg;
+        })
+
+        const imageTopic = new ROSLIB.Topic({
+            ros,
+            name: 'image_base64_topic',
+            messageType: 'std_msgs/String'
+        });
+
+        imageTopic.subscribe((msg) => {
+            const imgElement = document.getElementById('received-image');
+            imgElement.src = 'data:image/jpeg;base64,' + msg.data;
+        })
     </script>
 </body>
 </html>
