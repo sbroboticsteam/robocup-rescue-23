@@ -42,7 +42,7 @@
         </span>
     </p>
 
-    <canvas id="simulation-canvas" width="400" height="400"></canvas>
+    <canvas id="simulation-canvas" width="400" height="400" style="border: 1px solid black;"></canvas>
 
     <p>Image data received:
         <img id="received-image" src="#">
@@ -80,8 +80,8 @@
 
         const joyTopic = new ROSLIB.Topic({
             ros,
-            name: 'joy',
-            messageType: 'sensor_msgs/msgs/Joy'
+            name: '/joy',
+            messageType: 'sensor_msgs/msg/Joy'
         });
 
         joyTopic.subscribe((msg) => {
