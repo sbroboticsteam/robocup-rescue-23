@@ -18,8 +18,17 @@
                 <code>ros2 topic pub -1 /my_topic std_msgs/String "data: 'Hello World'"</code></li>
         </ul>
 
+        <p style="font-weight: bold;">To publish static images (.jpg format):</p>
+        <ul>
+            <li>Build <code>web_publishers</code> package by running <code>colcon build --packages-select web_publishers</code></li>
+            <li>Source the setup files by running <code>source install/setup.bash</code></li>
+            <li>Publish sample.jpg (or any image as long as you replace <code>IMG_PATH</code> in <code>imgpublisher.py)</code>
+            by running <code>ros2 run web_publishers image_publisher</code></li>
+        </ul>
+
         <p style="font-weight: bold;">To publish controller data:</p>
         <ul>
+            <li>Make sure your Ubuntu device detects controller, either via USB or Bluetooth</li>
             <li>Start a joy node by entering <code>ros2 run joy joy_node</code> inside terminal</li>
         </ul>
         
@@ -50,8 +59,13 @@
 
     <canvas id="simulation-canvas" width="400" height="400" style="border: 1px solid black;"></canvas>
 
-    <p style="font-weight: bold;">Image data received:</p>
+    <p style="font-weight: bold;">Static image data received:</p>
     <img id="received-image" src="#" width="400" height="400">
+
+    <p style="font-weight: bold;">Video data received:</p>
+    <video id="received-video" width="400" height="400">
+        <source src="#" type="video/mp4">
+    </video>
     
 
     <script type="text/javascript" type="text/javascript">
@@ -107,12 +121,10 @@
             console.log("Joystick data: " + msg);
             const controllerElement = document.getElementById('controller-data');
             controllerElement.innerText = "Input received: " + msg;
-            const forwardBackward = msg.axes[1];
-            const rotation = msg.axes[2];
-
-            updateTurtle(forwardBackward, rotation);
+            updateTurtle(msg);
         })
-
+        
+        // canvas that mimics turtlesim
         const canvas = document.getElementById('simulation-canvas');
         const ctx = canvas.getContext('2d');
         let turtle = {
@@ -133,13 +145,17 @@
             ctx.restore();
         }
 
-        function updateTurtle(forwardBackward, rotation) {
-            const speed = 2;
+        function updateTurtle(joyMsg) {
+            const forwardBackward = joyMsg.axes[1];
+            const leftRight = joyMsg.axes[0];
+
+            const speed = 5;
             const turnSpeed = 0.05;
 
-            turtle.angle += rotation * turnSpeed;
-            turtle.x += Math.cos(turtle.angle) * forwardBackward * speed;
-            turtle.y += Math.sin(turtle.angle) * forwardBackward * speed;
+            turtle.x += leftRight * speed;
+            turtle.y += forwardBackward * speed;
+
+            turtle.angle += leftRight * turnSpeed;
 
             drawTurtle();
         }
