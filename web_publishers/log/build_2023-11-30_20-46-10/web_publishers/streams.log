@@ -1,0 +1,27 @@
+[0.883s] Invoking command in '/home/gteref/rcr-comms/rcr-comms-prototype/web_publishers': PYTHONPATH=/home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/build/web_publishers/prefix_override:/home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/install/web_publishers/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base build/web_publishers build --build-base /home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/build/web_publishers/build install --record /home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/build/web_publishers/install.log --single-version-externally-managed
+[1.099s] running egg_info
+[1.099s] writing build/web_publishers/web_publishers.egg-info/PKG-INFO
+[1.099s] writing dependency_links to build/web_publishers/web_publishers.egg-info/dependency_links.txt
+[1.100s] writing entry points to build/web_publishers/web_publishers.egg-info/entry_points.txt
+[1.100s] writing requirements to build/web_publishers/web_publishers.egg-info/requires.txt
+[1.100s] writing top-level names to build/web_publishers/web_publishers.egg-info/top_level.txt
+[1.102s] reading manifest file 'build/web_publishers/web_publishers.egg-info/SOURCES.txt'
+[1.104s] writing manifest file 'build/web_publishers/web_publishers.egg-info/SOURCES.txt'
+[1.106s] running build
+[1.107s] running build_py
+[1.107s] copying web_publishers/imgpublisher.py -> /home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/build/web_publishers/build/lib/web_publishers
+[1.107s] running install
+[1.108s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[1.108s]   warnings.warn(
+[1.108s] running install_lib
+[1.108s] copying /home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/build/web_publishers/build/lib/web_publishers/imgpublisher.py -> /home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/install/web_publishers/lib/python3.10/site-packages/web_publishers
+[1.109s] byte-compiling /home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/install/web_publishers/lib/python3.10/site-packages/web_publishers/imgpublisher.py to imgpublisher.cpython-310.pyc
+[1.110s] running install_data
+[1.111s] running install_egg_info
+[1.114s] removing '/home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/install/web_publishers/lib/python3.10/site-packages/web_publishers-0.0.0-py3.10.egg-info' (and everything under it)
+[1.114s] Copying build/web_publishers/web_publishers.egg-info to /home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/install/web_publishers/lib/python3.10/site-packages/web_publishers-0.0.0-py3.10.egg-info
+[1.115s] running install_scripts
+[1.140s] Installing image_publisher script to /home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/install/web_publishers/lib/web_publishers
+[1.140s] Installing random_string_publisher script to /home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/install/web_publishers/lib/web_publishers
+[1.141s] writing list of installed files to '/home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/build/web_publishers/install.log'
+[1.168s] Invoked command in '/home/gteref/rcr-comms/rcr-comms-prototype/web_publishers' returned '0': PYTHONPATH=/home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/build/web_publishers/prefix_override:/home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/install/web_publishers/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base build/web_publishers build --build-base /home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/build/web_publishers/build install --record /home/gteref/rcr-comms/rcr-comms-prototype/web_publishers/build/web_publishers/install.log --single-version-externally-managed

@@ -36,6 +36,12 @@
         </ul>
     </p>
 
+    <p><code>random_string_publisher</code> messages received:
+        <ul id="random-messages"
+            style="font-weight: bold;">
+        </ul>
+    </p>
+
     <p>Controller data received:
         <span id="controller-data">
             N/A
@@ -77,6 +83,19 @@
             newMessage.appendChild(document.createTextNode(msg.data));
             messageList.appendChild(newMessage);
         });
+
+        const randomStringListener = new ROSLIB.Topic({
+            ros,
+            name: 'random_string_topic',
+            messageType: 'std_msgs/String'
+        })
+
+        randomStringListener.subscribe((msg) => {
+            const messageList = document.getElementById('random-messages');
+            const newMessage = document.createElement('li');
+            newMessage.appendChild(document.createTextNode(msg.data));
+            messageList.appendChild(newMessage);
+        })
 
         const joyTopic = new ROSLIB.Topic({
             ros,

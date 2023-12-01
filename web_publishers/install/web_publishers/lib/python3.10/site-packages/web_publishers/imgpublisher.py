@@ -17,6 +17,8 @@ class ImagePublisher(Node):
     
     def timer_callback(self):
         cv_image = cv2.imread(IMG_PATH)
+        if cv_image is None:
+            raise FileNotFoundError(f"Unable to load image from path: {IMG_PATH}")
         _, buffer = cv2.imencode('.jpg', cv_image)
         jpgAsText = base64.b64encode(buffer).decode()
         self.publisher_.publish(String(data=jpgAsText))
