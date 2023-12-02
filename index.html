@@ -152,8 +152,8 @@
             const speed = 5;
             const turnSpeed = 0.05;
 
-            turtle.x += leftRight * speed;
-            turtle.y += forwardBackward * speed;
+            turtle.x += leftRight * speed * -1;
+            turtle.y += forwardBackward * speed * -1;
 
             turtle.angle += leftRight * turnSpeed;
 
