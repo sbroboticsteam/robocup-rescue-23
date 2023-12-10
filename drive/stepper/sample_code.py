@@ -23,9 +23,9 @@ def main():
     # motor1.MRT(-16000, 833, 8333)
     # time.sleep(5)
 
-    motor1.CUSTOM(11, 21, 300)  # Set register 21 to 300 (acceleration)
+    motor1.CUSTOM(11, 21, 500000)  # Set register 21 to 300 (acceleration)
     motor1.CUSTOM(12, 21)
-    motor1.CUSTOM(11, 22, 800)  # Set register 22 to 800 (velocity)
+    motor1.CUSTOM(11, 22, -60000000)  # Set register 22 to 800 (velocity)
     motor1.CUSTOM(12, 22)
 
     time.sleep(1)
