@@ -48,6 +48,20 @@ def main():
             except ValueError:
                 print("Invalid acceleration value. Please enter a valid number.")
 
+        elif command == "position":
+            motor1.RRG(1)
+
+        elif command == "poll":
+            motor1.POL()
+            motor1.CPL(65535)
+
+        elif command.startswith("read ="):
+            try:
+                register = int(command.split("=")[1].strip())
+                motor1.RRG(register)
+            except ValueError:
+                print("Invalid data register. Please enter a valid number.")
+
         else:
             print("Invalid command. Please try again.")
 

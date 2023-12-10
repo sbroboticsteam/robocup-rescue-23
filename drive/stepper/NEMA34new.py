@@ -302,9 +302,18 @@ class NEMA34():
         CID = COMMANDS.get("CPL")
         self.execute(CID, address)
         
-    def POL(self, address: int):
-
+    def POL(self):
         CID = COMMANDS.get("POL")
-        self.execute(CID, address)
-        
+        self.execute(CID)
+
+    def RRG(self, dataRegister: int):
+        # 60 is placeholder for number of registers
+        if dataRegister < 0 or dataRegister > 60:
+            logging.error(f"Data register ({num}) is invalid")
+            return
+
+        CID = COMMANDS.get("RRG")
+        self.execute(CID, dataRegister)
+
+
         
