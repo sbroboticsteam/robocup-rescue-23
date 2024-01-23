@@ -131,6 +131,7 @@
     <ClCompile Include="serialib.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="instructNames.h" />
     <ClInclude Include="NEMA34new.h" />
     <ClInclude Include="serialib.h" />
   </ItemGroup>

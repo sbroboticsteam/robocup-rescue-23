@@ -29,5 +29,8 @@
     <ClInclude Include="NEMA34new.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="instructNames.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
