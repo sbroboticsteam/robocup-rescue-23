@@ -12,7 +12,7 @@
 int main()
 {
 
-	NEMA34 m1("\\\\.\\COM26");
+	NEMA34 m1("\\\\.\\COM6");
 
 	m1.WRI(22, 80000000);	//set velocity
 

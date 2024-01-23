@@ -275,7 +275,14 @@ public:
 
         //get string from serialib
         serial.readString(serialStr, '\r', MAX_STRING_SIZE - 1, 1000);  
+        
         std::string response = serialStr;
+
+        if (response.empty())       //check if no response, if so, exit read func
+        {
+            std::cout << "[WARNING] No Reponse from QuickSilver" << std::endl;
+            return "";
+        }
 
         std::vector<std::string> response_data;
         std::string response_type = "";
@@ -289,7 +296,7 @@ public:
             response_string.erase(0, pos + 1);
         }
         response_type = response_data[0];
-        response_args = response_data[1];
+        response_args = response_data[1];                                           //TODO: Find out why this crashes (parsing issue?)
         for (int i = 2; i < response_data.size(); i++) {
             response_args += " " + response_data[i];
         }
