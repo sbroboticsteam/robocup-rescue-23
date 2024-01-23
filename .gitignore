@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/drive/stepper-Cpp/.vs/QuickSilver-Python-to-Cpp
+/drive/stepper-Cpp/x64/Debug/QuickSil.49f2be3d.tlog
+/drive/stepper-Cpp/x64/Debug/QuickSilver-Python-to-Cpp.exe
+*.recipe
+/drive/stepper-Cpp/x64/Debug/QuickSilver-Python-to-Cpp.log
+/drive/stepper-Cpp/x64/Debug/QuickSilver-Python-to-Cpp.pdb
+/drive/stepper-Cpp/x64/Debug/QuickSilver-Python-to-Cpp.ilk
+/drive/stepper-Cpp/x64/Debug/vc143.idb
+*.pdb

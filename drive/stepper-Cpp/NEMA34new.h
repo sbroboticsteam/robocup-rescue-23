@@ -244,7 +244,7 @@ public:
             break;
         }
         
-
+        exit(1);
 
 
     }

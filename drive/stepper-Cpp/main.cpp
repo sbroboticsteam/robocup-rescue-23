@@ -1,11 +1,10 @@
 #define NOMINMAX
-#include <windows.h>
+
 
 #include <iostream>
 
-#include <unistd.h>
 
-
+#include "serialib.h"
 #include "NEMA34new.h"
 
 
@@ -22,8 +21,11 @@ int main()
 	m1.PVC(21,0,0,0);		//start motor
 
 
+	//for Windows, use Sleep (uppercase)
+	Sleep(3);		//wait 3 sec
 
-	usleep(3000000);		//wait 3 sec
+	//for Linux, use sleep (lowercase)
+	//sleep(3);		//wait 3 sec
 
 
 	m1.STP(8000);			//stop motor
