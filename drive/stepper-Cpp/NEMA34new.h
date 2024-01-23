@@ -120,28 +120,38 @@ public:
         std::string response_string = response;
         size_t pos = 0;
         std::string token;
-        while ((pos = response_string.find(" ")) != std::string::npos) {
+
+        while ((pos = response_string.find(" ")) != std::string::npos) 
+        {
             token = response_string.substr(0, pos);
             response_data.push_back(token);
             response_string.erase(0, pos + 1);
         }
         response_type = response_data[0];
-        response_args = response_data[1];                                           //TODO: Find out why this crashes (parsing issue?)
-        for (int i = 2; i < response_data.size(); i++) {
+        response_args = response_data[1];                                        //TODO: Find out why this crashes (parsing issue?)
+        
+        for (int i = 2; i < response_data.size(); i++) 
+        {
             response_args += " " + response_data[i];
         }
+
         std::vector<int> response_args_int;
         pos = 0;
-        while ((pos = response_args.find(" ")) != std::string::npos) {
+
+        while ((pos = response_args.find(" ")) != std::string::npos) 
+        {
             token = response_args.substr(0, pos);
             response_args_int.push_back(std::stoi(token, nullptr, 16));
             response_args.erase(0, pos + 1);
         }
-        if (response_type == "*") {
+
+        if (response_type == "*") 
+        {
             int respondingID = response_args_int[0];
             return "<--@" + std::to_string(respondingID) + " ACK";
         }
-        else if (response_type == "!") {
+        else if (response_type == "!") 
+        {
             int respondingID = response_args_int[0];
             int commandBeingRespondedTo = response_args_int[1];
             int NAKCode = response_args_int[2];
@@ -169,17 +179,24 @@ public:
             }
             return "<--@" + std::to_string(respondingID) + " Data " + data_string;
         }
-        else {
+        else 
+        {
             std::cout << "-----" << response << std::endl;
             return "<-- Unknown response type";
         }
     }
     void WRI(int dataRegister, int data) {
-        if (dataRegister == false) {
+        
+        if (dataRegister == false) 
+        {
             std::cout << "Data register is invalid" << std::endl;
             return;
         }
-        if ((data < 0 || data > 4294967295) && (data < -2147483648 || data > 2147483647)) {
+
+
+        //make sure data is within range
+        if ((data < 0 || data > 4294967295) && (data < -2147483648 || data > 2147483647)) 
+        {
             std::cout << "Data is invalid $" << data << std::endl;
             return;
         }
@@ -187,19 +204,23 @@ public:
         execute(args);
     }
     void PVC(int startingDataRegister, int stopEnable = 0, int stopState = 0, int mode = 0) {
-        if (mode < -32678 || mode > 32767) {
+        if (mode < -32678 || mode > 32767) 
+        {
             std::cout << "Mode is invalid" << std::endl;
             return;
         }
-        if (startingDataRegister < 11 || startingDataRegister > 98) {
+        if (startingDataRegister < 11 || startingDataRegister > 98) 
+        {
             std::cout << "Starting data register (" << startingDataRegister << ") is out of range" << std::endl;
             return;
         }
-        if (stopEnable < 0 || stopEnable > 32767) {
+        if (stopEnable < 0 || stopEnable > 32767) 
+        {
             std::cout << "Stop enable invalid" << std::endl;
             return;
         }
-        if (stopState != 0 && stopState != 1 && stopState != 2 && stopState != 3) {
+        if (stopState != 0 && stopState != 1 && stopState != 2 && stopState != 3) 
+        {
             std::cout << "Stop state is invalid" << std::endl;
             return;
         }
@@ -207,7 +228,8 @@ public:
         execute(args);
     }
     void STP(int deceleration) {
-        if (deceleration < -1 || deceleration > 536870911) {
+        if (deceleration < -1 || deceleration > 536870911) 
+        {
             std::cout << "Deceleration (" << deceleration << ") out of range" << std::endl;
             return;
         }
@@ -215,7 +237,8 @@ public:
         execute(args);
     }
     void CPL(int address) {
-        if (address < 0 || address > 65535) {
+        if (address < 0 || address > 65535) 
+        {
             std::cout << "Address (" << address << ") is out of range" << std::endl;
             return;
         }
@@ -227,7 +250,8 @@ public:
         execute(args);
     }
     void RRG(int dataRegister) {
-        if (dataRegister < 0 || dataRegister > 60) {
+        if (dataRegister < 0 || dataRegister > 60) 
+        {
             std::cout << "Data register (" << dataRegister << ") is invalid" << std::endl;
             return;
         }
