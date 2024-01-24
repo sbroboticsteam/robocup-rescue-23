@@ -3,10 +3,9 @@
 #include <iostream>
 
 #include "serialib.h"
-#include "NEMA34new.h"
+#include "NEMA34.h"
 
-int main()
-{
+int main() {
 
 	NEMA34 m1("\\\\.\\COM26");
 

@@ -12,3 +12,20 @@
 /drive/stepper-Cpp/x64/Debug/vc143.idb
 *.pdb
 /drive/stepper-Cpp/x64/Debug/main.obj
+
+
+# Python files
+__pycache__/
+
+# Build files
+/build
+/x64
+
+# VS Code files
+.vscode
+
+# Visual Studio Files
+.sln
+.vcxproj
+.vcxproj.filters
+.vcxproj.user
