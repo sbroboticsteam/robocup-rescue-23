@@ -6,7 +6,7 @@ import time
 
 def main():
     # Port found using device manager
-    port = "COM8"
+    port = "COM26"
     # portToUse = comports()[-1].name
 
     # Initialize motor object

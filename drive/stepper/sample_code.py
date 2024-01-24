@@ -1,13 +1,14 @@
-from NEMA34 import NEMA34
+from NEMA34new import NEMA34
 from serial.tools.list_ports import comports
 import time
+
 
 # Motor idles at 0.53A
 
 
 def main():
     # Port found using device manager
-    port = "COM8"
+    port = "COM26"
     portToUse = comports()[-1].name
 
     # Initialize motor object
