@@ -57,15 +57,13 @@
         </span>
     </p>
 
-    <canvas id="simulation-canvas" width="400" height="400" style="border: 1px solid black;"></canvas>
+    <canvas id="simulation-canvas" width="800" height="800" style="border: 1px solid black;"></canvas>
 
     <p style="font-weight: bold;">Static image data received:</p>
     <img id="received-image" src="#" width="400" height="400">
 
     <p style="font-weight: bold;">Video data received:</p>
-    <video id="received-video" width="400" height="400">
-        <source src="#" type="video/mp4">
-    </video>
+    <img id="video-frame" src="">
     
 
     <script type="text/javascript" type="text/javascript">
@@ -169,7 +167,17 @@
         imageTopic.subscribe((msg) => {
             const imgElement = document.getElementById('received-image');
             imgElement.src = 'data:image/jpeg;base64,' + msg.data;
-        })
+        });
+
+        const videoTopic = new ROSLIB.Topic({
+            ros,
+            name: 'video_stream',
+            messageType: 'std_msgs/String'
+        });
+
+        videoTopic.subscribe((msg) => {
+            document.getElementById('video-frame').src = "data:image/jpg;base64, " + msg.data;
+        });
 
         drawTurtle();
     </script>

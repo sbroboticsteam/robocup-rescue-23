@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'image_publisher = web_publishers.imgpublisher:main',
-            'random_string_publisher = web_publishers.stringpublisher:main'
+            'random_string_publisher = web_publishers.stringpublisher:main',
+            'video_publisher = web_publishers.videopublisher:main'
         ],
     },
 )
