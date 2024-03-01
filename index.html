@@ -170,13 +170,13 @@
         });
 
         const videoTopic = new ROSLIB.Topic({
-            ros,
+            ros: ros,
             name: 'video_stream',
             messageType: 'std_msgs/String'
         });
 
-        videoTopic.subscribe((msg) => {
-            document.getElementById('video-frame').src = "data:image/jpg;base64, " + msg.data;
+        videoTopic.subscribe(function(msg) {
+            document.getElementById('video-frame').src = "data:image/jpg;base64, " + msg.data; 
         });
 
         drawTurtle();

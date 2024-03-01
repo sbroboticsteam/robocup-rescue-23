@@ -22,7 +22,8 @@ setup(
         'console_scripts': [
             'image_publisher = web_publishers.imgpublisher:main',
             'random_string_publisher = web_publishers.stringpublisher:main',
-            'video_publisher = web_publishers.videopublisher:main'
+            'video_publisher = web_publishers.videopublisher:main',
+            'pointcloud2_publisher = web_publishers.pointcloud2publisher:main'
         ],
-    },
+    }
 )
