@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Image
+import numpy as np
+from sensor_msgs.msg import Image, CompressedImage
 import cv2
 from cv_bridge import CvBridge
 import base64
@@ -8,7 +9,7 @@ import base64
 class VideoPublisher(Node):
     def __init__(self):
         super().__init__('video_publisher')
-        self.publisher_ = self.create_publisher(Image, 'video_frame', 10)
+        self.publisher_ = self.create_publisher(CompressedImage, 'video_frame', 10)
         self.bridge = CvBridge()
         self.timer = self.create_timer(1 / 30.0, self.timer_callback) # 30hz video
 
@@ -19,8 +20,15 @@ class VideoPublisher(Node):
     def timer_callback(self):
         ret, frame = self.cap.read()
         if ret:
-            msg = self.bridge.cv2_to_imgmsg(frame, "bgr8")
-        self.publisher_.publish(msg)
+            ret, buffer = cv2.imencode('.jpg', frame)
+            if not ret:
+                return
+            
+            msg = CompressedImage()
+            msg.header.stamp = self.get_clock().now().to_msg()
+            msg.format = "jpeg"
+            msg.data = np.array(buffer).tobytes()
+            self.publisher_.publish(msg)
     
 def main(args=None):
     rclpy.init(args=args)
